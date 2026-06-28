@@ -95,7 +95,7 @@ const UserVerifications = () => {
   };
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{ maxWidth: '100%', overflowX: 'hidden' }}>
       <Typography variant="h4" sx={{ fontWeight: 800, mb: 3 }}>
         User Account Management
       </Typography>
@@ -104,7 +104,15 @@ const UserVerifications = () => {
       {error && <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>{error}</Alert>}
 
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <Tabs value={tabValue} onChange={(e, newVal) => setTabValue(newVal)} textColor="secondary" indicatorColor="secondary">
+        <Tabs 
+          value={tabValue} 
+          onChange={(e, newVal) => setTabValue(newVal)} 
+          textColor="secondary" 
+          indicatorColor="secondary"
+          variant="scrollable"
+          scrollButtons="auto"
+          allowScrollButtonsMobile
+        >
           <Tab label="Pending Approvals" />
           <Tab label="All Platform Users" />
         </Tabs>

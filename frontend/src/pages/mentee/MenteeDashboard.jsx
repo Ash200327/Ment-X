@@ -100,7 +100,7 @@ const MenteeDashboard = () => {
   ];
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" sx={{ maxWidth: '100%', overflowX: 'hidden' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h4" sx={{ fontWeight: 800 }}>
           Welcome back, {user?.name}!

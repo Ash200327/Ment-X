@@ -109,7 +109,7 @@ const SubmissionsReview = () => {
   };
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{ maxWidth: '100%', overflowX: 'hidden' }}>
       <Typography variant="h4" sx={{ fontWeight: 800, mb: 4 }}>
         Submissions Review Board
       </Typography>

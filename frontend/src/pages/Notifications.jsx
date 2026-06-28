@@ -124,7 +124,7 @@ const Notifications = () => {
   const hasUnread = notifications.some(n => !n.readStatus);
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" sx={{ maxWidth: '100%', overflowX: 'hidden' }}>
       <Typography variant="h4" sx={{ fontWeight: 800, mb: 4 }}>
         Platform Notifications
       </Typography>

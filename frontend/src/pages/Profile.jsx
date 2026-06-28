@@ -66,7 +66,7 @@ const Profile = () => {
   };
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" sx={{ maxWidth: '100%', overflowX: 'hidden' }}>
       <Typography variant="h4" sx={{ fontWeight: 800, mb: 3 }}>
         Profile Settings
       </Typography>
