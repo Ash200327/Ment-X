@@ -71,7 +71,7 @@ const Leaderboard = () => {
       {message && <Alert severity="success" sx={{ mb: 2 }} onClose={() => setMessage('')}>{message}</Alert>}
       {error && <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>{error}</Alert>}
 
-      <TableContainer component={Paper} sx={{ border: '1px solid #1f2937', borderRadius: 3, overflow: 'hidden' }}>
+      <TableContainer component={Paper} sx={{ border: '1px solid #1f2937', borderRadius: 3, overflowX: 'auto' }}>
         <Table>
           <TableHead>
             <TableRow>

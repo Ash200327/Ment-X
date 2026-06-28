@@ -117,7 +117,7 @@ const SubmissionsReview = () => {
       {success && <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess('')}>{success}</Alert>}
       {error && <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>{error}</Alert>}
 
-      <TableContainer component={Paper} sx={{ border: '1px solid #1f2937', borderRadius: 3 }}>
+      <TableContainer component={Paper} sx={{ border: '1px solid #1f2937', borderRadius: 3, overflowX: 'auto' }}>
         <Table>
           <TableHead>
             <TableRow>

@@ -254,7 +254,7 @@ const MentorGroups = () => {
                   Group Members ({members.length})
                 </Typography>
 
-                <TableContainer component={Paper} sx={{ border: '1px solid #1f2937' }}>
+                <TableContainer component={Paper} sx={{ border: '1px solid #1f2937', overflowX: 'auto' }}>
                   <Table>
                     <TableHead>
                       <TableRow>

@@ -359,7 +359,7 @@ const CreateTask = () => {
                 <AssignmentIcon /> Tasks Issued By You
               </Typography>
 
-              <TableContainer component={Paper} sx={{ border: '1px solid #1f2937', flexGrow: 1, maxHeight: 600 }}>
+              <TableContainer component={Paper} sx={{ border: '1px solid #1f2937', flexGrow: 1, maxHeight: 600, overflowX: 'auto' }}>
                 <Table stickyHeader>
                   <TableHead>
                     <TableRow>

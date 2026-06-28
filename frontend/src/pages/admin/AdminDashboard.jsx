@@ -72,7 +72,7 @@ const AdminDashboard = () => {
         <HistoryIcon /> System Audit Logs
       </Typography>
       
-      <TableContainer component={Paper} sx={{ border: '1px solid #1f2937', borderRadius: 3 }}>
+      <TableContainer component={Paper} sx={{ border: '1px solid #1f2937', borderRadius: 3, overflowX: 'auto' }}>
         <Table>
           <TableHead>
             <TableRow>

@@ -128,7 +128,7 @@ const MentorDashboard = () => {
           <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
             <RateReviewIcon /> Submissions Awaiting Review ({pendingSubmissions.length})
           </Typography>
-          <TableContainer component={Paper} sx={{ border: '1px solid #1f2937', borderRadius: 3, maxHeight: 350 }}>
+          <TableContainer component={Paper} sx={{ border: '1px solid #1f2937', borderRadius: 3, maxHeight: 350, overflowX: 'auto' }}>
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
