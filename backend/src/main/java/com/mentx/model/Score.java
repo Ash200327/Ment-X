@@ -22,8 +22,12 @@ public class Score {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assignment_id", nullable = false, unique = true)
+    @JoinColumn(name = "assignment_id", nullable = true, unique = true)
     private TaskAssignment assignment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mentee_id", nullable = false)
+    private User mentee;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mentor_id", nullable = false)

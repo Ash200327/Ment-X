@@ -60,6 +60,7 @@ public class LeaderboardService {
                     .completedTasks(completedTasks)
                     .consistencyBadge(consistencyBadge)
                     .topPerformer(false) // Will be calculated after sorting
+                    .profilePicture(mentee.getProfilePicture())
                     .build());
         }
 

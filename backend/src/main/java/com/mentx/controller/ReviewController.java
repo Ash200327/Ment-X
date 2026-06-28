@@ -60,4 +60,15 @@ public class ReviewController {
             return ResponseEntity.badRequest().body(new AuthController.MessageResponse(e.getMessage()));
         }
     }
+
+    @PostMapping("/manual")
+    @PreAuthorize("hasAnyRole('MENTOR', 'ADMIN')")
+    public ResponseEntity<?> assignManualScore(@Valid @RequestBody com.mentx.dto.ManualScoreRequest request, Principal principal) {
+        try {
+            reviewService.assignManualScore(request, principal.getName());
+            return ResponseEntity.ok(new AuthController.MessageResponse("Manual score assigned successfully."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(new AuthController.MessageResponse(e.getMessage()));
+        }
+    }
 }

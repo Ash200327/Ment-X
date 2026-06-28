@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Card, CardContent, Typography, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Slider, ToggleButtonGroup, ToggleButton, Alert, Chip } from '@mui/material';
+import { Container, Card, CardContent, Typography, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Slider, ToggleButtonGroup, ToggleButton, Alert, Chip, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -18,6 +18,13 @@ const SubmissionsReview = () => {
   const [reviewStatus, setReviewStatus] = useState('APPROVED'); // APPROVED or NEEDS_IMPROVEMENT
   const [score, setScore] = useState(10); // Default 10 points
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  // Manual score dialog states
+  const [manualScoreDialogOpen, setManualScoreDialogOpen] = useState(false);
+  const [mentees, setMentees] = useState([]);
+  const [targetMenteeId, setTargetMenteeId] = useState('');
+  const [manualWeekNumber, setManualWeekNumber] = useState(1);
+  const [manualScore, setManualScore] = useState(10);
 
   const fetchAssignments = async () => {
     try {
@@ -40,6 +47,43 @@ const SubmissionsReview = () => {
   useEffect(() => {
     fetchAssignments();
   }, []);
+
+  const fetchMentees = async () => {
+    try {
+      const res = await axiosInstance.get('/api/notifications/recipients');
+      const filtered = res.data.filter(u => u.role === 'MENTEE');
+      setMentees(filtered);
+    } catch(e) {
+      console.error(e);
+    }
+  };
+
+  const handleAssignManualScore = async () => {
+    if (!targetMenteeId) {
+      setError("Please select a mentee.");
+      return;
+    }
+    if (!manualWeekNumber) {
+      setError("Please enter a week number.");
+      return;
+    }
+    try {
+      const payload = {
+        menteeId: targetMenteeId,
+        weekNumber: parseInt(manualWeekNumber),
+        score: parseInt(manualScore)
+      };
+      await axiosInstance.post('/api/reviews/manual', payload);
+      setSuccess("Manual score assigned successfully!");
+      setManualScoreDialogOpen(false);
+      setTargetMenteeId('');
+      setManualWeekNumber(1);
+      setManualScore(10);
+      fetchAssignments();
+    } catch (e) {
+      setError(e.response?.data?.message || "Failed to assign manual score.");
+    }
+  };
 
   const handleOpenReview = async (assignment) => {
     setSelectedAssignment(assignment);
@@ -110,9 +154,21 @@ const SubmissionsReview = () => {
 
   return (
     <Container maxWidth="lg" sx={{ maxWidth: '100%', overflowX: 'hidden' }}>
-      <Typography variant="h4" sx={{ fontWeight: 800, mb: 4 }}>
-        Submissions Review Board
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, flexWrap: 'wrap', gap: 2 }}>
+        <Typography variant="h4" sx={{ fontWeight: 800 }}>
+          Submissions Review Board
+        </Typography>
+        <Button 
+          variant="contained" 
+          color="secondary" 
+          onClick={() => {
+            fetchMentees();
+            setManualScoreDialogOpen(true);
+          }}
+        >
+          Assign Manual Score
+        </Button>
+      </Box>
 
       {success && <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess('')}>{success}</Alert>}
       {error && <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>{error}</Alert>}
@@ -284,6 +340,69 @@ const SubmissionsReview = () => {
             </DialogActions>
           </>
         )}
+      </Dialog>
+
+      {/* Manual Score Dialog */}
+      <Dialog open={manualScoreDialogOpen} onClose={() => setManualScoreDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700 }}>
+          Assign Manual Score
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 2 }}>
+            <FormControl fullWidth required>
+              <InputLabel id="select-mentee-label">Select Mentee</InputLabel>
+              <Select
+                labelId="select-mentee-label"
+                value={targetMenteeId}
+                label="Select Mentee"
+                onChange={(e) => setTargetMenteeId(e.target.value)}
+              >
+                <MenuItem value="" disabled>Select a Mentee</MenuItem>
+                {mentees.map((m) => (
+                  <MenuItem key={m.id} value={m.id}>
+                    {m.name} ({m.email})
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <TextField
+              label="Week Number"
+              type="number"
+              fullWidth
+              required
+              value={manualWeekNumber}
+              onChange={(e) => setManualWeekNumber(e.target.value)}
+              inputProps={{ min: 1 }}
+            />
+
+            <Box>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                Awarded Score (0 - 100):
+              </Typography>
+              <Box sx={{ px: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
+                <Slider
+                  value={manualScore}
+                  onChange={(e, val) => setManualScore(val)}
+                  min={0}
+                  max={100}
+                  step={1}
+                  valueLabelDisplay="auto"
+                  sx={{ flexGrow: 1 }}
+                />
+                <Typography variant="h6" sx={{ minWidth: 40, fontWeight: 700, textAlign: 'right' }}>
+                  {manualScore}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button onClick={() => setManualScoreDialogOpen(false)} color="inherit">Cancel</Button>
+          <Button onClick={handleAssignManualScore} variant="contained" color="secondary">
+            Assign Score
+          </Button>
+        </DialogActions>
       </Dialog>
     </Container>
   );

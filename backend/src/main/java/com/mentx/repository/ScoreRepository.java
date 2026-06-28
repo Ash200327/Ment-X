@@ -14,6 +14,5 @@ public interface ScoreRepository extends JpaRepository<Score, Long> {
     Optional<Score> findByAssignment(TaskAssignment assignment);
     List<Score> findByAssignmentIn(List<TaskAssignment> assignments);
 
-    @Query("SELECT s FROM Score s WHERE s.assignment.mentee = :mentee")
     List<Score> findByMentee(User mentee);
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box, Chip, Button, Alert, Tooltip } from '@mui/material';
+import { Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box, Chip, Button, Alert, Tooltip, Avatar } from '@mui/material';
 import TrophyIcon from '@mui/icons-material/EmojiEvents';
 import FlameIcon from '@mui/icons-material/LocalFireDepartment';
 import CrownIcon from '@mui/icons-material/MilitaryTech';
@@ -109,7 +109,17 @@ const Leaderboard = () => {
                     {getRankBadge(row.rank)}
                   </TableCell>
                   <TableCell sx={{ fontWeight: row.userId === user?.id ? 700 : 500 }}>
-                    {row.name} {row.userId === user?.id && <Typography component="span" variant="caption" sx={{ color: '#818cf8', ml: 1 }}>(You)</Typography>}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Avatar
+                        src={row.profilePicture}
+                        sx={{ width: 28, height: 28, fontSize: '0.8rem', bgcolor: '#6366f1' }}
+                      >
+                        {row.name?.substring(0, 2).toUpperCase() || 'U'}
+                      </Avatar>
+                      <Box>
+                        {row.name} {row.userId === user?.id && <Typography component="span" variant="caption" sx={{ color: '#818cf8', ml: 1 }}>(You)</Typography>}
+                      </Box>
+                    </Box>
                   </TableCell>
                   <TableCell align="center">{row.completedTasks}</TableCell>
                   <TableCell align="center">

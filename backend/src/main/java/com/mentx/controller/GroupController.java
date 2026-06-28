@@ -2,6 +2,7 @@ package com.mentx.controller;
 
 import com.mentx.dto.GroupRequest;
 import com.mentx.dto.UserResponse;
+import com.mentx.dto.MenteeGroupResponse;
 import com.mentx.model.Group;
 import com.mentx.service.GroupService;
 import jakarta.validation.Valid;
@@ -30,6 +31,12 @@ public class GroupController {
     public ResponseEntity<List<Group>> getGroups(Principal principal) {
         // Return groups managed by current mentor
         return ResponseEntity.ok(groupService.getGroupsByMentor(principal.getName()));
+    }
+
+    @GetMapping("/my-groups")
+    @PreAuthorize("hasRole('MENTEE')")
+    public ResponseEntity<List<MenteeGroupResponse>> getMyGroups(Principal principal) {
+        return ResponseEntity.ok(groupService.getGroupsByMentee(principal.getName()));
     }
 
     @GetMapping("/all")

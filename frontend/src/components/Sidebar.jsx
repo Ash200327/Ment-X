@@ -47,6 +47,7 @@ const Sidebar = ({ mobileOpen, onSidebarToggle }) => {
       case 'MENTEE':
         return [
           { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
+          { text: 'My Group', icon: <PeopleIcon />, path: '/mentee/groups' },
           { text: 'My Tasks', icon: <AssignmentIcon />, path: '/mentee/tasks' },
           { text: 'Notifications', icon: <NotificationsIcon />, path: '/notifications' },
           { text: 'Leaderboard', icon: <LeaderboardIcon />, path: '/leaderboard' },

@@ -29,6 +29,7 @@ import SubmissionsReview from './pages/mentor/SubmissionsReview';
 
 // Mentee Pages
 import TasksBoard from './pages/mentee/TasksBoard';
+import MenteeGroups from './pages/mentee/MenteeGroups';
 
 const drawerWidth = 240;
 
@@ -82,6 +83,7 @@ function App() {
             {/* Mentee Routes */}
             <Route element={<PrivateRoute allowedRoles={['MENTEE']} />}>
               <Route path="/mentee/tasks" element={<TasksBoard />} />
+              <Route path="/mentee/groups" element={<MenteeGroups />} />
             </Route>
           </Routes>
         </Box>

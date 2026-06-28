@@ -76,6 +76,7 @@ public class ReviewService {
             } else {
                 score = Score.builder()
                         .assignment(assignment)
+                        .mentee(assignment.getMentee())
                         .mentor(mentor)
                         .weekNumber(assignment.getTask().getWeekNumber())
                         .score(request.getScore())
@@ -131,6 +132,52 @@ public class ReviewService {
 
         return scoreRepository.findByAssignment(assignment)
                 .orElseThrow(() -> new RuntimeException("No score found for this assignment."));
+    }
+
+    @Transactional
+    public void assignManualScore(com.mentx.dto.ManualScoreRequest request, String mentorEmail) {
+        User mentor = userRepository.findByEmail(mentorEmail)
+                .orElseThrow(() -> new RuntimeException("Mentor not found"));
+
+        User mentee = userRepository.findById(request.getMenteeId())
+                .orElseThrow(() -> new RuntimeException("Mentee not found"));
+
+        if (mentee.getRole() != Role.MENTEE) {
+            throw new RuntimeException("Cannot assign scores to non-mentee users.");
+        }
+
+        // Update if a manual score exists for this mentee and week (without an assignment)
+        Optional<Score> existingManualScoreOpt = scoreRepository.findAll().stream()
+                .filter(s -> s.getMentee().getId().equals(mentee.getId()) 
+                        && s.getWeekNumber().equals(request.getWeekNumber()) 
+                        && s.getAssignment() == null)
+                .findFirst();
+
+        Score scoreEntry;
+        if (existingManualScoreOpt.isPresent()) {
+            scoreEntry = existingManualScoreOpt.get();
+            scoreEntry.setScore(request.getScore());
+            scoreEntry.setMentor(mentor);
+        } else {
+            scoreEntry = Score.builder()
+                    .mentee(mentee)
+                    .mentor(mentor)
+                    .weekNumber(request.getWeekNumber())
+                    .score(request.getScore())
+                    .build();
+        }
+
+        scoreRepository.save(scoreEntry);
+
+        // Send notification
+        notificationService.sendNotification(mentee, "Score Updated",
+                String.format("Mentor '%s' assigned you a score of %d points for Week %d.", 
+                        mentor.getName(), request.getScore(), request.getWeekNumber()));
+
+        // Audit log
+        auditLogService.logAction(mentorEmail, "MANUAL_SCORE_ASSIGNED",
+                String.format("Assigned manual score of %d to %s for Week %d", 
+                        request.getScore(), mentee.getEmail(), request.getWeekNumber()));
     }
 
     public List<com.mentx.model.Score> getScoresForMentee(String menteeEmail) {

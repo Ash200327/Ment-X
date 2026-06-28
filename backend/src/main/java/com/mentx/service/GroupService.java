@@ -2,6 +2,7 @@ package com.mentx.service;
 
 import com.mentx.dto.GroupRequest;
 import com.mentx.dto.UserResponse;
+import com.mentx.dto.MenteeGroupResponse;
 import com.mentx.model.*;
 import com.mentx.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,6 +139,31 @@ public class GroupService {
         auditLogService.logAction(mentorEmail, "GROUP_DELETED", "Deleted group: " + group.getGroupName());
     }
 
+    public List<MenteeGroupResponse> getGroupsByMentee(String menteeEmail) {
+        User mentee = userRepository.findByEmail(menteeEmail)
+                .orElseThrow(() -> new RuntimeException("Mentee not found"));
+
+        List<GroupMember> memberships = groupMemberRepository.findByMentee(mentee);
+
+        return memberships.stream()
+                .map(GroupMember::getGroup)
+                .map(group -> {
+                    List<UserResponse> membersList = groupMemberRepository.findByGroup(group).stream()
+                            .map(GroupMember::getMentee)
+                            .map(this::convertToResponse)
+                            .collect(Collectors.toList());
+
+                    return MenteeGroupResponse.builder()
+                            .id(group.getId())
+                            .groupName(group.getGroupName())
+                            .description(group.getDescription())
+                            .mentor(convertToResponse(group.getMentor()))
+                            .members(membersList)
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
     private UserResponse convertToResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())
@@ -146,6 +172,7 @@ public class GroupService {
                 .role(user.getRole().name())
                 .status(user.getStatus().name())
                 .verified(user.isVerified())
+                .profilePicture(user.getProfilePicture())
                 .createdAt(user.getCreatedAt())
                 .build();
     }
