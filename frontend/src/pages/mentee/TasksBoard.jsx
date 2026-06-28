@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Card, CardContent, Typography, Grid, Button, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Slider, Alert, Chip, Divider, Tooltip } from '@mui/material';
+import { Container, Card, CardContent, Typography, Grid, Button, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Slider, Alert, Chip, Divider, Tooltip, Paper } from '@mui/material';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SendIcon from '@mui/icons-material/Send';
 import StarIcon from '@mui/icons-material/Star';
 import FlameIcon from '@mui/icons-material/LocalFireDepartment';
+import InfoIcon from '@mui/icons-material/Info';
 import axiosInstance from '../../api/axiosInstance';
 
 const TasksBoard = () => {
@@ -27,6 +28,20 @@ const TasksBoard = () => {
   const [selectedUpdate, setSelectedUpdate] = useState(null);
   const [remark, setRemark] = useState(null);
   const [score, setScore] = useState(null);
+
+  // Task Details dialog state
+  const [taskDetailsOpen, setTaskDetailsOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+
+  const handleOpenTaskDetails = (task) => {
+    setSelectedTask(task);
+    setTaskDetailsOpen(true);
+  };
+
+  const handleCloseTaskDetails = () => {
+    setTaskDetailsOpen(false);
+    setSelectedTask(null);
+  };
 
   const fetchAssignments = async () => {
     try {
@@ -204,7 +219,8 @@ const TasksBoard = () => {
                     display: '-webkit-box',
                     overflow: 'hidden',
                     WebkitBoxOrient: 'vertical',
-                    WebkitLineClamp: 3
+                    WebkitLineClamp: 3,
+                    whiteSpace: 'pre-wrap'
                   }}>
                     {row.task.description || 'No description provided.'}
                   </Typography>
@@ -224,6 +240,10 @@ const TasksBoard = () => {
                 </CardContent>
 
                 <Box sx={{ p: 2, pt: 0, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  <Button size="small" variant="outlined" color="info" startIcon={<InfoIcon />} onClick={() => handleOpenTaskDetails(row.task)}>
+                    View Task Details
+                  </Button>
+
                   {row.status === 'ASSIGNED' && (
                     <Button size="small" variant="outlined" startIcon={<VisibilityIcon />} onClick={() => handleMarkRead(row.id)}>
                       Mark Read
@@ -244,7 +264,7 @@ const TasksBoard = () => {
 
                   {['SUBMITTED', 'COMPLETED', 'NEEDS_IMPROVEMENT'].includes(row.status) && (
                     <Button size="small" variant="outlined" onClick={() => handleOpenDetails(row)}>
-                      View Details
+                      View Submission Details
                     </Button>
                   )}
                 </Box>
@@ -384,6 +404,52 @@ const TasksBoard = () => {
             </DialogContent>
             <DialogActions sx={{ p: 2 }}>
               <Button onClick={handleCloseDetails} variant="outlined">Close</Button>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
+
+      {/* Task Specifications Details Dialog */}
+      <Dialog open={taskDetailsOpen} onClose={handleCloseTaskDetails} maxWidth="md" fullWidth>
+        {selectedTask && (
+          <>
+            <DialogTitle sx={{ fontWeight: 700, borderBottom: '1px solid #1f2937' }}>
+              Task Specifications: {selectedTask.title}
+            </DialogTitle>
+            <DialogContent sx={{ mt: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+                  <Chip label={`Week ${selectedTask.weekNumber}`} color="primary" variant="outlined" />
+                  <Chip
+                    label={selectedTask.priority}
+                    color={selectedTask.priority === 'HIGH' ? 'error' : selectedTask.priority === 'MEDIUM' ? 'warning' : 'info'}
+                  />
+                  <Chip label={`Deadline: ${new Date(selectedTask.deadline).toLocaleString()}`} variant="outlined" />
+                </Box>
+
+                <Box>
+                  <Typography variant="caption" color="text.secondary">Full Description & Code/Instructions:</Typography>
+                  <Paper 
+                    variant="outlined" 
+                    sx={{ 
+                      p: 2, 
+                      mt: 1, 
+                      borderRadius: 1.5, 
+                      bgcolor: 'rgba(0,0,0,0.2)', 
+                      borderColor: '#1f2937',
+                      fontFamily: 'Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
+                      whiteSpace: 'pre-wrap', 
+                      fontSize: '0.9rem',
+                      overflowX: 'auto'
+                    }}
+                  >
+                    {selectedTask.description || 'No description provided.'}
+                  </Paper>
+                </Box>
+              </Box>
+            </DialogContent>
+            <DialogActions sx={{ p: 2 }}>
+              <Button onClick={handleCloseTaskDetails} variant="outlined">Close</Button>
             </DialogActions>
           </>
         )}
