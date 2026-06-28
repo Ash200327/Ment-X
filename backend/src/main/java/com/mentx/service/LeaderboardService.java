@@ -31,8 +31,22 @@ public class LeaderboardService {
         List<User> mentees = userRepository.findByRole(Role.MENTEE);
         List<LeaderboardResponse> board = new ArrayList<>();
 
+        // Fetch all scores in a single query and group by mentee ID
+        List<Score> allScores = scoreRepository.findAll();
+        java.util.Map<Long, List<Score>> scoresByMenteeId = allScores.stream()
+                .filter(s -> s.getMentee() != null)
+                .collect(Collectors.groupingBy(s -> s.getMentee().getId()));
+
+        // Fetch all completed task counts in a single query and group by mentee ID
+        List<Object[]> completedTaskCountsList = taskAssignmentRepository.countCompletedTasksGroupByMentee();
+        java.util.Map<Long, Long> completedTaskCountsByMenteeId = completedTaskCountsList.stream()
+                .collect(Collectors.toMap(
+                        row -> (Long) row[0],
+                        row -> (Long) row[1]
+                ));
+
         for (User mentee : mentees) {
-            List<Score> scores = scoreRepository.findByMentee(mentee);
+            List<Score> scores = scoresByMenteeId.getOrDefault(mentee.getId(), new ArrayList<>());
             int totalScore = scores.stream().mapToInt(Score::getScore).sum();
             
             // Get latest week score
@@ -41,7 +55,7 @@ public class LeaderboardService {
                     .map(Score::getScore)
                     .orElse(0);
 
-            long completedTasks = taskAssignmentRepository.countByMenteeAndStatus(mentee, AssignmentStatus.COMPLETED);
+            long completedTasks = completedTaskCountsByMenteeId.getOrDefault(mentee.getId(), 0L);
 
             // Consistency Badge logic: Completed at least 3 tasks and average score >= 8
             boolean consistencyBadge = false;

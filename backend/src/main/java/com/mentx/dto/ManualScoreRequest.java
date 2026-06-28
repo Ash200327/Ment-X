@@ -15,6 +15,7 @@ public class ManualScoreRequest {
 
     @NotNull
     @Min(0)
-    @Max(100)
     private Integer score;
+
+    private boolean override = true;
 }

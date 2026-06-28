@@ -39,7 +39,6 @@ public class Score {
 
     @NotNull
     @Min(0)
-    @Max(100)
     @Column(nullable = false)
     private Integer score;
 

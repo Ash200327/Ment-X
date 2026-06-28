@@ -156,7 +156,10 @@ public class ReviewService {
         Score scoreEntry;
         if (existingManualScoreOpt.isPresent()) {
             scoreEntry = existingManualScoreOpt.get();
-            scoreEntry.setScore(request.getScore());
+            int newScore = request.isOverride() 
+                    ? request.getScore() 
+                    : scoreEntry.getScore() + request.getScore();
+            scoreEntry.setScore(newScore);
             scoreEntry.setMentor(mentor);
         } else {
             scoreEntry = Score.builder()

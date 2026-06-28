@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Card, CardContent, Typography, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Slider, ToggleButtonGroup, ToggleButton, Alert, Chip, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { Container, Card, CardContent, Typography, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Slider, ToggleButtonGroup, ToggleButton, Alert, Chip, MenuItem, Select, FormControl, InputLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -25,6 +25,7 @@ const SubmissionsReview = () => {
   const [targetMenteeId, setTargetMenteeId] = useState('');
   const [manualWeekNumber, setManualWeekNumber] = useState(1);
   const [manualScore, setManualScore] = useState(10);
+  const [manualScoreMode, setManualScoreMode] = useState('override'); // 'override' or 'add'
 
   const fetchAssignments = async () => {
     try {
@@ -71,7 +72,8 @@ const SubmissionsReview = () => {
       const payload = {
         menteeId: targetMenteeId,
         weekNumber: parseInt(manualWeekNumber),
-        score: parseInt(manualScore)
+        score: parseInt(manualScore),
+        override: manualScoreMode === 'override'
       };
       await axiosInstance.post('/api/reviews/manual', payload);
       setSuccess("Manual score assigned successfully!");
@@ -79,6 +81,7 @@ const SubmissionsReview = () => {
       setTargetMenteeId('');
       setManualWeekNumber(1);
       setManualScore(10);
+      setManualScoreMode('override');
       fetchAssignments();
     } catch (e) {
       setError(e.response?.data?.message || "Failed to assign manual score.");
@@ -376,25 +379,36 @@ const SubmissionsReview = () => {
               inputProps={{ min: 1 }}
             />
 
-            <Box>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                Awarded Score (0 - 100):
+            <FormControl component="fieldset">
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontWeight: 600 }}>
+                Score Mode:
               </Typography>
-              <Box sx={{ px: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
-                <Slider
-                  value={manualScore}
-                  onChange={(e, val) => setManualScore(val)}
-                  min={0}
-                  max={100}
-                  step={1}
-                  valueLabelDisplay="auto"
-                  sx={{ flexGrow: 1 }}
+              <RadioGroup
+                value={manualScoreMode}
+                onChange={(e) => setManualScoreMode(e.target.value)}
+              >
+                <FormControlLabel 
+                  value="override" 
+                  control={<Radio size="small" />} 
+                  label="Fully override the score of the selected mentee" 
                 />
-                <Typography variant="h6" sx={{ minWidth: 40, fontWeight: 700, textAlign: 'right' }}>
-                  {manualScore}
-                </Typography>
-              </Box>
-            </Box>
+                <FormControlLabel 
+                  value="add" 
+                  control={<Radio size="small" />} 
+                  label="Add up entered score to total of the mentee" 
+                />
+              </RadioGroup>
+            </FormControl>
+
+            <TextField
+              label="Awarded Score"
+              type="number"
+              fullWidth
+              required
+              value={manualScore}
+              onChange={(e) => setManualScore(e.target.value)}
+              inputProps={{ min: 0 }}
+            />
           </Box>
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>
