@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @Component
 public class DatabaseSeeder implements CommandLineRunner {
@@ -18,6 +19,9 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @org.springframework.beans.factory.annotation.Value("${app.seed.admin.email}")
     private String adminEmail;
 
@@ -26,6 +30,14 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        // Drop NOT NULL constraint on assignment_id for manual scores
+        try {
+            jdbcTemplate.execute("ALTER TABLE scores ALTER COLUMN assignment_id DROP NOT NULL;");
+            System.out.println("====== DB SCHEMA FIX: assignment_id constraint dropped successfully ======");
+        } catch (Exception e) {
+            System.err.println("====== DB SCHEMA FIX ERROR: " + e.getMessage() + " ======");
+        }
+
         if (!userRepository.existsByEmail(adminEmail)) {
             User admin = User.builder()
                     .name("Platform Admin")
