@@ -14,6 +14,11 @@ const TasksBoard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [filterType, setFilterType] = useState('ACTIVE'); // 'ACTIVE' or 'SUBMITTED'
+
+  const activeAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status));
+  const pastAssignments = assignments.filter(r => ['SUBMITTED', 'COMPLETED'].includes(r.status));
+  const filteredAssignments = filterType === 'ACTIVE' ? activeAssignments : pastAssignments;
 
   // Update submission form state
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
@@ -161,32 +166,49 @@ const TasksBoard = () => {
   };
 
   const getStatusColor = (status) => {
-    if (status === 'COMPLETED') return '#10b981'; // Green
-    if (status === 'SUBMITTED') return '#0ea5e9'; // Sky
-    if (status === 'NEEDS_IMPROVEMENT') return '#f59e0b'; // Amber
-    if (status === 'IN_PROGRESS') return '#6366f1'; // Indigo
-    if (status === 'VIEWED') return '#9ca3af'; // Grey
-    return '#6b7280'; // Dark Grey for assigned
+    if (status === 'COMPLETED' || status === 'SUBMITTED') return '#10b981'; // Green
+    if (status === 'IN_PROGRESS' || status === 'NEEDS_IMPROVEMENT') return '#3b82f6'; // Blue
+    return '#9ca3af'; // Grey for ASSIGNED, VIEWED
   };
 
   return (
     <Container maxWidth="lg">
-      <Typography variant="h4" sx={{ fontWeight: 800, mb: 4 }}>
-        My Assigned Tasks
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, flexWrap: 'wrap', gap: 2 }}>
+        <Typography variant="h4" sx={{ fontWeight: 800 }}>
+          My Tasks
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 1.5 }}>
+          <Button
+            variant={filterType === 'ACTIVE' ? 'contained' : 'outlined'}
+            color="primary"
+            onClick={() => setFilterType('ACTIVE')}
+          >
+            Active Tasks ({activeAssignments.length})
+          </Button>
+          <Button
+            variant={filterType === 'SUBMITTED' ? 'contained' : 'outlined'}
+            color="secondary"
+            onClick={() => setFilterType('SUBMITTED')}
+          >
+            Past Submitted Tasks ({pastAssignments.length})
+          </Button>
+        </Box>
+      </Box>
 
       {success && <Alert severity="success" sx={{ mb: 3 }} onClose={() => setSuccess('')}>{success}</Alert>}
       {error && <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>{error}</Alert>}
 
       {loading ? (
         <Typography color="text.secondary">Loading task board...</Typography>
-      ) : assignments.length === 0 ? (
+      ) : filteredAssignments.length === 0 ? (
         <Card sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', p: 5 }}>
-          <Typography color="text.secondary">No tasks assigned to you yet.</Typography>
+          <Typography color="text.secondary">
+            {filterType === 'ACTIVE' ? 'No active tasks found.' : 'No past submitted tasks found.'}
+          </Typography>
         </Card>
       ) : (
         <Grid container spacing={3}>
-          {assignments.map((row) => (
+          {filteredAssignments.map((row) => (
             <Grid item xs={12} md={6} key={row.id}>
               <Card sx={{
                 height: '100%',
