@@ -78,6 +78,8 @@ const Leaderboard = () => {
               <TableCell align="center" sx={{ width: 80 }}>Rank</TableCell>
               <TableCell>Mentee Name</TableCell>
               <TableCell align="center">Completed Tasks</TableCell>
+              <TableCell align="center">Weeks Active</TableCell>
+              <TableCell align="center">Average Score</TableCell>
               <TableCell align="center">Latest Score</TableCell>
               <TableCell align="center">Total Points</TableCell>
               <TableCell align="right">Badges / Achievements</TableCell>
@@ -86,13 +88,13 @@ const Leaderboard = () => {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={6} align="center" sx={{ py: 5 }}>
+                <TableCell colSpan={8} align="center" sx={{ py: 5 }}>
                   <Typography color="text.secondary">Loading rankings...</Typography>
                 </TableCell>
               </TableRow>
             ) : leaderboard.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} align="center" sx={{ py: 5 }}>
+                <TableCell colSpan={8} align="center" sx={{ py: 5 }}>
                   <Typography color="text.secondary">No participants recorded yet.</Typography>
                 </TableCell>
               </TableRow>
@@ -106,7 +108,13 @@ const Leaderboard = () => {
                   }}
                 >
                   <TableCell align="center" sx={{ fontWeight: 700, fontSize: '1.1rem' }}>
-                    {getRankBadge(row.rank)}
+                    {row.eligible ? getRankBadge(row.rank) : (
+                      <Tooltip title="Requires at least 2 weeks of scoring activity to be ranked on the leaderboard">
+                        <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500, fontStyle: 'italic' }}>
+                          Unranked
+                        </Typography>
+                      </Tooltip>
+                    )}
                   </TableCell>
                   <TableCell sx={{ fontWeight: row.userId === user?.id ? 700 : 500 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -122,6 +130,12 @@ const Leaderboard = () => {
                     </Box>
                   </TableCell>
                   <TableCell align="center">{row.completedTasks}</TableCell>
+                  <TableCell align="center">{row.activeWeeks} {row.activeWeeks === 1 ? 'wk' : 'wks'}</TableCell>
+                  <TableCell align="center">
+                    <Typography sx={{ fontWeight: 700, color: '#10b981' }}>
+                      {row.averageScore?.toFixed(1) || '0.0'}
+                    </Typography>
+                  </TableCell>
                   <TableCell align="center">
                     <Typography sx={{ fontWeight: 600, color: row.weeklyScore > 0 ? '#10b981' : 'inherit' }}>
                       {row.weeklyScore}

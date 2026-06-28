@@ -19,4 +19,7 @@ public class LeaderboardResponse {
     private boolean consistencyBadge;
     private boolean topPerformer;
     private String profilePicture;
+    private Double averageScore;
+    private Integer activeWeeks;
+    private boolean eligible;
 }

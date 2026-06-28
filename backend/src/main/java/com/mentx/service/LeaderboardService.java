@@ -57,6 +57,15 @@ public class LeaderboardService {
 
             long completedTasks = completedTaskCountsByMenteeId.getOrDefault(mentee.getId(), 0L);
 
+            // Calculate active weeks (unique week numbers in their scores)
+            int activeWeeks = (int) scores.stream()
+                    .map(Score::getWeekNumber)
+                    .distinct()
+                    .count();
+
+            double averageScore = activeWeeks > 0 ? (double) totalScore / activeWeeks : 0.0;
+            boolean eligible = activeWeeks >= 2;
+
             // Consistency Badge logic: Completed at least 3 tasks and average score >= 8
             boolean consistencyBadge = false;
             if (completedTasks >= 3) {
@@ -75,15 +84,26 @@ public class LeaderboardService {
                     .consistencyBadge(consistencyBadge)
                     .topPerformer(false) // Will be calculated after sorting
                     .profilePicture(mentee.getProfilePicture())
+                    .averageScore(averageScore)
+                    .activeWeeks(activeWeeks)
+                    .eligible(eligible)
                     .build());
         }
 
-        // Sort by total score descending, then by completed tasks descending, then by name alphabetically
+        // Sort by eligibility descending, average score descending, total score descending, completed tasks descending, name alphabetically
         board.sort((a, b) -> {
+            int eligibilityCompare = Boolean.compare(b.isEligible(), a.isEligible());
+            if (eligibilityCompare != 0) return eligibilityCompare;
+
+            int averageCompare = Double.compare(b.getAverageScore(), a.getAverageScore());
+            if (averageCompare != 0) return averageCompare;
+
             int scoreCompare = Integer.compare(b.getTotalScore(), a.getTotalScore());
             if (scoreCompare != 0) return scoreCompare;
+
             int tasksCompare = Long.compare(b.getCompletedTasks(), a.getCompletedTasks());
             if (tasksCompare != 0) return tasksCompare;
+
             return a.getName().compareTo(b.getName());
         });
 
