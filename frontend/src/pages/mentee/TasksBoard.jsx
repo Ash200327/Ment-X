@@ -171,6 +171,28 @@ const TasksBoard = () => {
     return '#9ca3af'; // Grey for ASSIGNED, VIEWED
   };
 
+  const renderDescriptionWithLinks = (text) => {
+    if (!text) return 'No description provided.';
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    return parts.map((part, i) => {
+      if (urlRegex.test(part)) {
+        return (
+          <a
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#3b82f6', textDecoration: 'underline', wordBreak: 'break-all' }}
+          >
+            {part}
+          </a>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <Container maxWidth="lg">
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, flexWrap: 'wrap', gap: 2 }}>
@@ -244,7 +266,7 @@ const TasksBoard = () => {
                     WebkitLineClamp: 3,
                     whiteSpace: 'pre-wrap'
                   }}>
-                    {row.task.description || 'No description provided.'}
+                    {renderDescriptionWithLinks(row.task.description)}
                   </Typography>
 
                   <Divider sx={{ my: 1.5 }} />
@@ -465,7 +487,7 @@ const TasksBoard = () => {
                       overflowX: 'auto'
                     }}
                   >
-                    {selectedTask.description || 'No description provided.'}
+                    {renderDescriptionWithLinks(selectedTask.description)}
                   </Paper>
                 </Box>
               </Box>
