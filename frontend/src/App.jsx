@@ -41,7 +41,7 @@ function App() {
   };
 
   const layout = (
-    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#0b0f19' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#0b0f19', maxWidth: '100vw', overflowX: 'hidden' }}>
       <Navbar onSidebarToggle={handleDrawerToggle} />
       <Sidebar mobileOpen={mobileOpen} onSidebarToggle={handleDrawerToggle} />
       
@@ -50,10 +50,12 @@ function App() {
         sx={{
           flexGrow: 1,
           p: { xs: 2, sm: 3 },
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          width: { xs: '100%', sm: `calc(100% - ${drawerWidth}px)` },
+          maxWidth: '100%',
           minHeight: '100vh',
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          overflowX: 'hidden'
         }}
       >
         <Toolbar />
