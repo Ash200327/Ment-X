@@ -58,10 +58,33 @@ const CreateTask = () => {
     fetchMentorTasks();
   }, []);
 
+  const formatDeadline = (dateStr) => {
+    if (!dateStr) return '';
+    try {
+      const t = dateStr.split(/T|\s/);
+      const d = t[0].split('-');
+      const time = t[1] ? t[1].split(':') : [0, 0, 0];
+      const date = new Date(
+        parseInt(d[0]),
+        parseInt(d[1]) - 1,
+        parseInt(d[2]),
+        parseInt(time[0]),
+        parseInt(time[1]),
+        time[2] ? parseInt(time[2]) : 0
+      );
+      return date.toLocaleString();
+    } catch (e) {
+      return new Date(dateStr).toLocaleString();
+    }
+  };
+
   const formatDatetimeLocal = (isoString) => {
     if (!isoString) return '';
+    if (isoString.includes('T')) {
+      return isoString.slice(0, 16);
+    }
     const date = new Date(isoString);
-    const tzoffset = date.getTimezoneOffset() * 60000; // offset in milliseconds
+    const tzoffset = date.getTimezoneOffset() * 60000;
     const localISOTime = (new Date(date.getTime() - tzoffset)).toISOString().slice(0, 16);
     return localISOTime;
   };
@@ -133,7 +156,7 @@ const CreateTask = () => {
         }
       }
 
-      const formattedDeadline = deadline ? new Date(deadline).toISOString() : null;
+      const formattedDeadline = deadline ? deadline : null;
 
       const payload = {
         title,
@@ -390,7 +413,7 @@ const CreateTask = () => {
                           <TableCell sx={{ fontWeight: 600 }}>{task.title}</TableCell>
                           <TableCell align="center">{task.weekNumber}</TableCell>
                           <TableCell>{task.group ? task.group.groupName : 'Individual'}</TableCell>
-                          <TableCell>{new Date(task.deadline).toLocaleString()}</TableCell>
+                          <TableCell>{formatDeadline(task.deadline)}</TableCell>
                           <TableCell align="center">
                             <Chip label={task.priority} size="small" color={getPriorityColor(task.priority)} sx={{ fontWeight: 700, fontSize: '0.65rem' }} />
                           </TableCell>

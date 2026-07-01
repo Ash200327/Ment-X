@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface TaskAssignmentRepository extends JpaRepository<TaskAssignment, Long> {
-    @Query("SELECT ta FROM TaskAssignment ta JOIN FETCH ta.task WHERE ta.mentee = :mentee")
+    @Query("SELECT ta FROM TaskAssignment ta JOIN FETCH ta.task t LEFT JOIN FETCH t.group WHERE ta.mentee = :mentee")
     List<TaskAssignment> findByMentee(@org.springframework.data.repository.query.Param("mentee") User mentee);
 
     List<TaskAssignment> findByTask(Task task);
@@ -20,10 +20,10 @@ public interface TaskAssignmentRepository extends JpaRepository<TaskAssignment, 
     Optional<TaskAssignment> findByTaskAndMentee(Task task, User mentee);
     boolean existsByTaskAndMentee(Task task, User mentee);
 
-    @Query("SELECT ta FROM TaskAssignment ta JOIN FETCH ta.task t JOIN FETCH ta.mentee WHERE t.mentor = :mentor")
+    @Query("SELECT ta FROM TaskAssignment ta JOIN FETCH ta.task t LEFT JOIN FETCH t.group JOIN FETCH ta.mentee WHERE t.mentor = :mentor")
     List<TaskAssignment> findByMentor(@org.springframework.data.repository.query.Param("mentor") User mentor);
 
-    @Query("SELECT ta FROM TaskAssignment ta JOIN FETCH ta.task t JOIN FETCH ta.mentee WHERE t.mentor = :mentor AND ta.status = :status")
+    @Query("SELECT ta FROM TaskAssignment ta JOIN FETCH ta.task t LEFT JOIN FETCH t.group JOIN FETCH ta.mentee WHERE t.mentor = :mentor AND ta.status = :status")
     List<TaskAssignment> findByMentorAndStatus(@org.springframework.data.repository.query.Param("mentor") User mentor, @org.springframework.data.repository.query.Param("status") AssignmentStatus status);
 
     long countByMentee(User mentee);

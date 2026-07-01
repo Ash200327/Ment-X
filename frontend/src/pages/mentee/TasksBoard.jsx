@@ -7,6 +7,7 @@ import SendIcon from '@mui/icons-material/Send';
 import StarIcon from '@mui/icons-material/Star';
 import FlameIcon from '@mui/icons-material/LocalFireDepartment';
 import InfoIcon from '@mui/icons-material/Info';
+import PeopleIcon from '@mui/icons-material/People';
 import axiosInstance from '../../api/axiosInstance';
 
 const TasksBoard = () => {
@@ -171,6 +172,26 @@ const TasksBoard = () => {
     return '#9ca3af'; // Grey for ASSIGNED, VIEWED
   };
 
+  const formatDeadline = (dateStr) => {
+    if (!dateStr) return '';
+    try {
+      const t = dateStr.split(/T|\s/);
+      const d = t[0].split('-');
+      const time = t[1] ? t[1].split(':') : [0, 0, 0];
+      const date = new Date(
+        parseInt(d[0]),
+        parseInt(d[1]) - 1,
+        parseInt(d[2]),
+        parseInt(time[0]),
+        parseInt(time[1]),
+        time[2] ? parseInt(time[2]) : 0
+      );
+      return date.toLocaleString();
+    } catch (e) {
+      return new Date(dateStr).toLocaleString();
+    }
+  };
+
   const renderDescriptionWithLinks = (text) => {
     if (!text) return 'No description provided.';
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -239,6 +260,33 @@ const TasksBoard = () => {
                 justifyContent: 'space-between',
                 borderLeft: `6px solid ${getStatusColor(row.status)}`
               }}>
+                <Box sx={{ 
+                  px: 2, 
+                  py: 1, 
+                  background: row.task.group 
+                    ? 'linear-gradient(90deg, rgba(99, 102, 241, 0.08) 0%, rgba(17, 24, 39, 0) 100%)' 
+                    : 'linear-gradient(90deg, rgba(16, 185, 129, 0.08) 0%, rgba(17, 24, 39, 0) 100%)',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1
+                }}>
+                  {row.task.group ? (
+                    <>
+                      <PeopleIcon sx={{ fontSize: '1rem', color: '#6366f1' }} />
+                      <Typography variant="caption" sx={{ fontWeight: 700, color: '#a5b4fc', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Group: {row.task.group.groupName}
+                      </Typography>
+                    </>
+                  ) : (
+                    <>
+                      <StarIcon sx={{ fontSize: '1rem', color: '#10b981' }} />
+                      <Typography variant="caption" sx={{ fontWeight: 700, color: '#6ee7b7', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Specially for You
+                      </Typography>
+                    </>
+                  )}
+                </Box>
                 <CardContent>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                     <Chip label={`Week ${row.task.weekNumber}`} size="small" variant="outlined" />
@@ -273,7 +321,7 @@ const TasksBoard = () => {
 
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
                     <Typography variant="caption" color="text.secondary">
-                      Deadline: <strong>{new Date(row.task.deadline).toLocaleString()}</strong>
+                      Deadline: <strong>{formatDeadline(row.task.deadline)}</strong>
                     </Typography>
                     <Chip
                       label={row.task.priority}
@@ -468,7 +516,22 @@ const TasksBoard = () => {
                     label={selectedTask.priority}
                     color={selectedTask.priority === 'HIGH' ? 'error' : selectedTask.priority === 'MEDIUM' ? 'warning' : 'info'}
                   />
-                  <Chip label={`Deadline: ${new Date(selectedTask.deadline).toLocaleString()}`} variant="outlined" />
+                  <Chip label={`Deadline: ${formatDeadline(selectedTask.deadline)}`} variant="outlined" />
+                  {selectedTask.group ? (
+                    <Chip 
+                      icon={<PeopleIcon sx={{ fontSize: '0.9rem !important' }} />}
+                      label={`Group: ${selectedTask.group.groupName}`} 
+                      color="secondary" 
+                      variant="outlined" 
+                    />
+                  ) : (
+                    <Chip 
+                      icon={<StarIcon sx={{ fontSize: '0.9rem !important' }} />}
+                      label="Specially for You" 
+                      color="success" 
+                      variant="outlined" 
+                    />
+                  )}
                 </Box>
 
                 <Box>
