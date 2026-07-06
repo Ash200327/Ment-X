@@ -106,38 +106,39 @@ const Navbar = ({ onSidebarToggle, onSidebarCollapseToggle }) => {
             color="inherit" 
             onClick={handleOpenNotifMenu}
             sx={{
-              '& .MuiBadge-badge': unreadCount > 0 ? {
-                animation: 'pulseBadge 1.5s infinite ease-in-out',
-                '&::after': {
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: '50%',
-                  animation: 'rippleRing 1.5s infinite ease-in-out',
-                  border: '2px solid #ef4444',
-                  content: '""',
-                },
+              position: 'relative',
+              animation: unreadCount > 0 ? 'bellSwing 2s infinite ease-in-out' : 'none',
+              transformOrigin: 'top center',
+              '&::after': unreadCount > 0 ? {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                animation: 'radarRipple 2s infinite ease-out',
+                border: '2px solid rgba(239, 68, 68, 0.6)',
+                boxShadow: '0 0 12px rgba(239, 68, 68, 0.5)',
+                content: '""',
+                pointerEvents: 'none',
               } : {},
-              '@keyframes pulseBadge': {
-                '0%': {
-                  transform: 'scale(1)',
-                },
-                '50%': {
-                  transform: 'scale(1.15)',
-                },
-                '100%': {
-                  transform: 'scale(1)',
-                },
+              '@keyframes bellSwing': {
+                '0%, 100%': { transform: 'rotate(0)' },
+                '10%': { transform: 'rotate(15deg)' },
+                '20%': { transform: 'rotate(-12deg)' },
+                '30%': { transform: 'rotate(10deg)' },
+                '40%': { transform: 'rotate(-8deg)' },
+                '50%': { transform: 'rotate(5deg)' },
+                '60%': { transform: 'rotate(-3deg)' },
+                '70%': { transform: 'rotate(0)' },
               },
-              '@keyframes rippleRing': {
+              '@keyframes radarRipple': {
                 '0%': {
-                  transform: 'scale(0.8)',
+                  transform: 'scale(0.85)',
                   opacity: 1,
                 },
                 '100%': {
-                  transform: 'scale(2.5)',
+                  transform: 'scale(1.9)',
                   opacity: 0,
                 },
               },
