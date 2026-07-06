@@ -5,6 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import HistoryIcon from '@mui/icons-material/History';
 import axiosInstance from '../../api/axiosInstance';
 
 const CreateTask = () => {
@@ -30,6 +31,8 @@ const CreateTask = () => {
   // Editing state
   const [editingTaskId, setEditingTaskId] = useState(null);
 
+  const [mentorAssignments, setMentorAssignments] = useState([]);
+
   const fetchOptions = async () => {
     try {
       const groupsRes = await axiosInstance.get('/api/groups');
@@ -53,9 +56,19 @@ const CreateTask = () => {
     }
   };
 
+  const fetchMentorAssignments = async () => {
+    try {
+      const res = await axiosInstance.get('/api/tasks/mentor/assignments');
+      setMentorAssignments(res.data);
+    } catch (e) {
+      console.error("Failed to load assignments list", e);
+    }
+  };
+
   useEffect(() => {
     fetchOptions();
     fetchMentorTasks();
+    fetchMentorAssignments();
   }, []);
 
   const formatDeadline = (dateStr) => {
@@ -87,6 +100,34 @@ const CreateTask = () => {
     const tzoffset = date.getTimezoneOffset() * 60000;
     const localISOTime = (new Date(date.getTime() - tzoffset)).toISOString().slice(0, 16);
     return localISOTime;
+  };
+
+  const getGroupTasksReference = () => {
+    if (!groupId) return [];
+    const filtered = mentorAssignments.filter(row => row.task.group && row.task.group.id === parseInt(groupId));
+    const uniqueTasks = [];
+    const seenTaskIds = new Set();
+    for (const item of filtered) {
+      if (!seenTaskIds.has(item.task.id)) {
+        seenTaskIds.add(item.task.id);
+        uniqueTasks.push(item.task);
+      }
+    }
+    return uniqueTasks.sort((a, b) => b.weekNumber - a.weekNumber);
+  };
+
+  const getIndividualTasksReference = () => {
+    if (!menteeId) return [];
+    const filtered = mentorAssignments.filter(row => !row.task.group && row.mentee.id === parseInt(menteeId));
+    const uniqueTasks = [];
+    const seenTaskIds = new Set();
+    for (const item of filtered) {
+      if (!seenTaskIds.has(item.task.id)) {
+        seenTaskIds.add(item.task.id);
+        uniqueTasks.push(item.task);
+      }
+    }
+    return uniqueTasks.sort((a, b) => b.weekNumber - a.weekNumber);
   };
 
   const handleEditClick = (task) => {
@@ -133,6 +174,7 @@ const CreateTask = () => {
           handleCancelEdit();
         }
         fetchMentorTasks();
+        fetchMentorAssignments();
       } catch (e) {
         setError("Failed to delete task.");
       }
@@ -185,6 +227,7 @@ const CreateTask = () => {
       setGroupId('');
       setMenteeId('');
       fetchMentorTasks();
+      fetchMentorAssignments();
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to save task.");
     } finally {
@@ -374,8 +417,88 @@ const CreateTask = () => {
           </Card>
         </Grid>
 
+        {/* Task Reference Panel Column */}
+        <Grid item xs={12} lg={3}>
+          <Card sx={{ border: '1px solid #1f2937', height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <CardContent sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <HistoryIcon /> Previous Work
+              </Typography>
+              
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2, textTransform: 'uppercase', fontWeight: 600 }}>
+                {assignType === 'group' && groupId ? (
+                  `Group: ${groups.find(g => g.id === parseInt(groupId))?.groupName || ''}`
+                ) : assignType === 'individual' && menteeId ? (
+                  `Mentee: ${mentees.find(m => m.id === parseInt(menteeId))?.name || ''}`
+                ) : (
+                  'No Selection'
+                )}
+              </Typography>
+
+              <Divider sx={{ mb: 2 }} />
+
+              <Box sx={{ 
+                flexGrow: 1, 
+                overflowY: 'auto', 
+                maxHeight: 600,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                pr: 0.5 
+              }}>
+                {!(assignType === 'group' && groupId) && !(assignType === 'individual' && menteeId) ? (
+                  <Box sx={{ py: 4, textAlign: 'center' }}>
+                    <Typography variant="body2" color="text.secondary">
+                      Select a group or individual mentee to view their previously assigned tasks.
+                    </Typography>
+                  </Box>
+                ) : (assignType === 'group' ? getGroupTasksReference() : getIndividualTasksReference()).length === 0 ? (
+                  <Box sx={{ py: 4, textAlign: 'center' }}>
+                    <Typography variant="body2" color="text.secondary">
+                      No previous tasks assigned to this selection.
+                    </Typography>
+                  </Box>
+                ) : (
+                  (assignType === 'group' ? getGroupTasksReference() : getIndividualTasksReference()).map((task) => (
+                    <Card key={task.id} variant="outlined" sx={{ borderColor: '#1f2937', bgcolor: 'rgba(255,255,255,0.01)' }}>
+                      <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                          <Chip label={`Week ${task.weekNumber}`} size="small" variant="outlined" sx={{ height: 20, fontSize: '0.65rem' }} />
+                          <Chip 
+                            label={task.priority} 
+                            size="small" 
+                            color={task.priority === 'HIGH' ? 'error' : task.priority === 'MEDIUM' ? 'warning' : 'info'}
+                            sx={{ height: 20, fontSize: '0.65rem', fontWeight: 700 }}
+                          />
+                        </Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+                          {task.title}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ 
+                          display: '-webkit-box',
+                          overflow: 'hidden',
+                          WebkitBoxOrient: 'vertical',
+                          WebkitLineClamp: 2,
+                          fontSize: '0.75rem',
+                          mb: 1
+                        }}>
+                          {task.description}
+                        </Typography>
+                        <Divider sx={{ my: 1, borderColor: 'rgba(255,255,255,0.04)' }} />
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: '0.7rem' }}>
+                          Deadline: {formatDeadline(task.deadline)}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
         {/* Task List Column */}
-        <Grid item xs={12} lg={8}>
+        <Grid item xs={12} lg={5}>
           <Card sx={{ border: '1px solid #1f2937', height: '100%', display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
