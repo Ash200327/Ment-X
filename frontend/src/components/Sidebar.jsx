@@ -1,5 +1,5 @@
 import React from 'react';
-import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Box } from '@mui/material';
+import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Box, Tooltip } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -16,7 +16,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const drawerWidth = 240;
 
-const Sidebar = ({ mobileOpen, onSidebarToggle }) => {
+const Sidebar = ({ mobileOpen, onSidebarToggle, collapsed }) => {
+  const currentDrawerWidth = collapsed ? 72 : 240;
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const location = useLocation();
@@ -63,31 +64,40 @@ const Sidebar = ({ mobileOpen, onSidebarToggle }) => {
   const drawerContent = (
     <Box sx={{ backgroundColor: '#111827', height: '100%', borderRight: '1px solid #1f2937', color: '#f3f4f6' }}>
       <Toolbar />
-      <List sx={{ px: 1, py: 2 }}>
+      <List sx={{ px: collapsed ? 0.5 : 1, py: 2, transition: 'padding 0.2s ease-in-out' }}>
         {menuItems.map((item) => {
           const isSelected = location.pathname === item.path;
           return (
             <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
-              <ListItemButton
-                onClick={() => {
-                  navigate(item.path);
-                  if (mobileOpen) onSidebarToggle();
-                }}
-                sx={{
-                  borderRadius: 2,
-                  backgroundColor: isSelected ? 'rgba(99, 102, 241, 0.12)' : 'transparent',
-                  color: isSelected ? '#818cf8' : '#f3f4f6',
-                  '&:hover': {
-                    backgroundColor: isSelected ? 'rgba(99, 102, 241, 0.18)' : 'rgba(255, 255, 255, 0.03)',
-                  },
-                  '& .MuiListItemIcon-root': {
-                    color: isSelected ? '#818cf8' : '#9ca3af',
-                  },
-                }}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} primaryTypographyProps={{ fontSize: '0.9rem', fontWeight: isSelected ? 600 : 500 }} />
-              </ListItemButton>
+              <Tooltip title={collapsed ? item.text : ''} placement="right" arrow>
+                <ListItemButton
+                  onClick={() => {
+                    navigate(item.path);
+                    if (mobileOpen) onSidebarToggle();
+                  }}
+                  sx={{
+                    borderRadius: 2,
+                    justifyContent: collapsed ? 'center' : 'initial',
+                    px: collapsed ? 1.5 : 2.5,
+                    minHeight: 48,
+                    backgroundColor: isSelected ? 'rgba(99, 102, 241, 0.12)' : 'transparent',
+                    color: isSelected ? '#818cf8' : '#f3f4f6',
+                    '&:hover': {
+                      backgroundColor: isSelected ? 'rgba(99, 102, 241, 0.18)' : 'rgba(255, 255, 255, 0.03)',
+                    },
+                    '& .MuiListItemIcon-root': {
+                      color: isSelected ? '#818cf8' : '#9ca3af',
+                      minWidth: collapsed ? 0 : 40,
+                      justifyContent: 'center',
+                    },
+                  }}
+                >
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  {!collapsed && (
+                    <ListItemText primary={item.text} primaryTypographyProps={{ fontSize: '0.9rem', fontWeight: isSelected ? 600 : 500 }} />
+                  )}
+                </ListItemButton>
+              </Tooltip>
             </ListItem>
           );
         })}
@@ -98,7 +108,11 @@ const Sidebar = ({ mobileOpen, onSidebarToggle }) => {
   return (
     <Box
       component="nav"
-      sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+      sx={{ 
+        width: { sm: currentDrawerWidth }, 
+        flexShrink: { sm: 0 },
+        transition: 'width 0.2s ease-in-out'
+      }}
     >
       {/* Mobile Drawer */}
       <Drawer
@@ -119,7 +133,12 @@ const Sidebar = ({ mobileOpen, onSidebarToggle }) => {
         variant="permanent"
         sx={{
           display: { xs: 'none', sm: 'block' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          '& .MuiDrawer-paper': { 
+            boxSizing: 'border-box', 
+            width: currentDrawerWidth,
+            transition: 'width 0.2s ease-in-out',
+            overflowX: 'hidden'
+          },
         }}
         open
       >

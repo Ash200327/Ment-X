@@ -8,7 +8,7 @@ import { logout } from '../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
 
-const Navbar = ({ onSidebarToggle }) => {
+const Navbar = ({ onSidebarToggle, onSidebarCollapseToggle }) => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -71,11 +71,21 @@ const Navbar = ({ onSidebarToggle }) => {
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor: '#0f172a', borderBottom: '1px solid #1f2937', boxShadow: 'none' }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {/* Mobile Drawer Toggle */}
           <IconButton
             color="inherit"
             edge="start"
             onClick={onSidebarToggle}
             sx={{ mr: 2, display: { sm: 'none' } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          {/* Desktop Sidebar Collapse Toggle */}
+          <IconButton
+            color="inherit"
+            edge="start"
+            onClick={onSidebarCollapseToggle}
+            sx={{ mr: 2, display: { xs: 'none', sm: 'inline-flex' } }}
           >
             <MenuIcon />
           </IconButton>

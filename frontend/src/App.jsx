@@ -36,22 +36,34 @@ const drawerWidth = 240;
 function App() {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    return localStorage.getItem('sidebar_collapsed') === 'true';
+  });
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  const handleSidebarCollapseToggle = () => {
+    setSidebarCollapsed(prev => {
+      const newVal = !prev;
+      localStorage.setItem('sidebar_collapsed', String(newVal));
+      return newVal;
+    });
+  };
+
   const layout = (
     <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#0b0f19', maxWidth: '100vw', overflowX: 'hidden' }}>
-      <Navbar onSidebarToggle={handleDrawerToggle} />
-      <Sidebar mobileOpen={mobileOpen} onSidebarToggle={handleDrawerToggle} />
+      <Navbar onSidebarToggle={handleDrawerToggle} onSidebarCollapseToggle={handleSidebarCollapseToggle} />
+      <Sidebar mobileOpen={mobileOpen} onSidebarToggle={handleDrawerToggle} collapsed={sidebarCollapsed} />
       
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           p: { xs: 2, sm: 3 },
-          width: { xs: '100%', sm: `calc(100% - ${drawerWidth}px)` },
+          width: { xs: '100%', sm: `calc(100% - ${sidebarCollapsed ? 72 : 240}px)` },
+          transition: 'width 0.2s ease-in-out',
           maxWidth: '100%',
           minHeight: '100vh',
           display: 'flex',
