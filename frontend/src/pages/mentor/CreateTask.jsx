@@ -102,6 +102,18 @@ const CreateTask = () => {
     return localISOTime;
   };
 
+  const renderDescriptionWithLinks = (text) => {
+    if (!text) return 'No description provided.';
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    return parts.map((part, i) => {
+      if (urlRegex.test(part)) {
+        return <a key={i} href={part} target="_blank" rel="noopener noreferrer" style={{ color: '#818cf8', textDecoration: 'underline' }}>{part}</a>;
+      }
+      return part;
+    });
+  };
+
   const getGroupTasksReference = () => {
     if (!groupId) return [];
     const filtered = mentorAssignments.filter(row => row.task.group && row.task.group.id === parseInt(groupId));
@@ -252,7 +264,7 @@ const CreateTask = () => {
 
       <Grid container spacing={4}>
         {/* Form Column */}
-        <Grid item xs={12} lg={4}>
+        <Grid item xs={12} lg={6}>
           <Card sx={{ border: '1px solid #1f2937' }}>
             <CardContent sx={{ p: 3 }}>
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>
@@ -418,7 +430,7 @@ const CreateTask = () => {
         </Grid>
 
         {/* Task Reference Panel Column */}
-        <Grid item xs={12} lg={3}>
+        <Grid item xs={12} lg={6}>
           <Card sx={{ border: '1px solid #1f2937', height: '100%', display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -471,18 +483,17 @@ const CreateTask = () => {
                             sx={{ height: 20, fontSize: '0.65rem', fontWeight: 700 }}
                           />
                         </Box>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>
                           {task.title}
                         </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ 
-                          display: '-webkit-box',
-                          overflow: 'hidden',
-                          WebkitBoxOrient: 'vertical',
-                          WebkitLineClamp: 2,
-                          fontSize: '0.75rem',
-                          mb: 1
+                        <Typography variant="body2" color="text.secondary" sx={{ 
+                          fontSize: '0.8rem',
+                          mb: 1.5,
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-word',
+                          lineHeight: 1.5
                         }}>
-                          {task.description}
+                          {renderDescriptionWithLinks(task.description)}
                         </Typography>
                         <Divider sx={{ my: 1, borderColor: 'rgba(255,255,255,0.04)' }} />
                         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: '0.7rem' }}>
@@ -498,7 +509,7 @@ const CreateTask = () => {
         </Grid>
 
         {/* Task List Column */}
-        <Grid item xs={12} lg={5}>
+        <Grid item xs={12}>
           <Card sx={{ border: '1px solid #1f2937', height: '100%', display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
