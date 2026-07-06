@@ -238,6 +238,27 @@ const TasksBoard = () => {
         </Box>
       </Box>
 
+      {/* Warning Notice Banner */}
+      <Alert 
+        severity="warning" 
+        variant="outlined"
+        icon={<InfoIcon sx={{ color: '#ef4444' }} />}
+        sx={{ 
+          mb: 4, 
+          borderColor: 'rgba(239, 68, 68, 0.4)', 
+          bgcolor: 'rgba(239, 68, 68, 0.05)', 
+          color: '#fca5a5',
+          borderRadius: 2,
+          fontWeight: 600,
+          boxShadow: '0 0 15px rgba(239, 68, 68, 0.25)',
+          '& .MuiAlert-message': {
+            fontSize: '0.95rem'
+          }
+        }}
+      >
+        No previous task updates will lead to no newer task assignments. Please contact your mentor for any problems or discussion.
+      </Alert>
+
       {success && <Alert severity="success" sx={{ mb: 3 }} onClose={() => setSuccess('')}>{success}</Alert>}
       {error && <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>{error}</Alert>}
 

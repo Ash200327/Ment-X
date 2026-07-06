@@ -102,7 +102,47 @@ const Navbar = ({ onSidebarToggle, onSidebarCollapseToggle }) => {
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           {/* Notifications Bell */}
-          <IconButton color="inherit" onClick={handleOpenNotifMenu}>
+          <IconButton 
+            color="inherit" 
+            onClick={handleOpenNotifMenu}
+            sx={{
+              '& .MuiBadge-badge': unreadCount > 0 ? {
+                animation: 'pulseBadge 1.5s infinite ease-in-out',
+                '&::after': {
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
+                  animation: 'rippleRing 1.5s infinite ease-in-out',
+                  border: '2px solid #ef4444',
+                  content: '""',
+                },
+              } : {},
+              '@keyframes pulseBadge': {
+                '0%': {
+                  transform: 'scale(1)',
+                },
+                '50%': {
+                  transform: 'scale(1.15)',
+                },
+                '100%': {
+                  transform: 'scale(1)',
+                },
+              },
+              '@keyframes rippleRing': {
+                '0%': {
+                  transform: 'scale(0.8)',
+                  opacity: 1,
+                },
+                '100%': {
+                  transform: 'scale(2.5)',
+                  opacity: 0,
+                },
+              },
+            }}
+          >
             <Badge badgeContent={unreadCount} color="error">
               <NotificationsIcon />
             </Badge>
