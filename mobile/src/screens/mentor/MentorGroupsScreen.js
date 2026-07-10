@@ -182,7 +182,7 @@ export default function MentorGroupsScreen() {
                 description={member.email}
                 left={props => 
                   member.hasProfilePicture ? (
-                    <Avatar.Image {...props} size={40} source={{ uri: member.hasProfilePicture }} style={[props.style]} />
+                    <Avatar.Image {...props} size={40} source={{ uri: `${baseURL}/api/users/${member.id}/avatar` }} style={[props.style]} />
                   ) : (
                     <Avatar.Text 
                       {...props}

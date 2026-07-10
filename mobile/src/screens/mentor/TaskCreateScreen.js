@@ -5,6 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import axiosInstance from '../../api/axiosInstance';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker'; // We need a dropdown for selections
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function TaskCreateScreen() {
   const theme = useTheme();
@@ -13,6 +14,7 @@ export default function TaskCreateScreen() {
   const [description, setDescription] = useState('');
   const [weekNumber, setWeekNumber] = useState('1');
   const [deadline, setDeadline] = useState('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [priority, setPriority] = useState('MEDIUM');
   const [assignType, setAssignType] = useState('group');
   const [groupId, setGroupId] = useState('');
@@ -148,6 +150,7 @@ export default function TaskCreateScreen() {
 
   const handleSubmit = async () => {
     if (!title) return Alert.alert("Validation Error", "Title is required");
+    if (!deadline) return Alert.alert("Validation Error", "Deadline is required");
     
     if (!editingTaskId) {
       if (assignType === 'group' && !groupId) return Alert.alert("Validation Error", "Please select a group");
@@ -325,13 +328,43 @@ export default function TaskCreateScreen() {
               />
             </View>
 
-            <TextInput
-              mode="outlined"
-              label="Deadline (YYYY-MM-DD)"
-              value={deadline}
-              onChangeText={setDeadline}
-              style={styles.input}
-            />
+            {Platform.OS === 'web' ? (
+              <TextInput
+                mode="outlined"
+                label="Deadline (YYYY-MM-DD)"
+                value={deadline}
+                onChangeText={setDeadline}
+                style={styles.input}
+              />
+            ) : (
+              <View>
+                <TextInput
+                  mode="outlined"
+                  label="Deadline"
+                  value={deadline}
+                  style={styles.input}
+                  right={<TextInput.Icon icon="calendar" onPress={() => setShowDatePicker(true)} />}
+                  onFocus={() => setShowDatePicker(true)}
+                  showSoftInputOnFocus={false}
+                />
+                {showDatePicker && (
+                  <DateTimePicker
+                    value={deadline ? new Date(deadline) : new Date()}
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                      setShowDatePicker(false);
+                      if (selectedDate) {
+                        const yyyy = selectedDate.getFullYear();
+                        const mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
+                        const dd = String(selectedDate.getDate()).padStart(2, '0');
+                        setDeadline(`${yyyy}-${mm}-${dd}`);
+                      }
+                    }}
+                  />
+                )}
+              </View>
+            )}
 
             <View style={styles.actionButtons}>
               {editingTaskId && (
