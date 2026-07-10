@@ -89,7 +89,7 @@ public class AuthService {
                 userDetails.getUsername(),
                 user.getRole().name(),
                 user.getStatus().name(),
-                user.getProfilePicture());
+                user.getProfilePicture() != null && !user.getProfilePicture().isEmpty());
     }
 
     @Transactional
@@ -119,7 +119,7 @@ public class AuthService {
                 .role(user.getRole().name())
                 .status(user.getStatus().name())
                 .verified(user.isVerified())
-                .profilePicture(user.getProfilePicture())
+                .hasProfilePicture(user.getProfilePicture() != null && !user.getProfilePicture().isEmpty())
                 .createdAt(user.getCreatedAt())
                 .build();
     }

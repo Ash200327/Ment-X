@@ -6,7 +6,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/authSlice';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../api/axiosInstance';
+import axiosInstance, { baseURL } from '../api/axiosInstance';
 
 const Navbar = ({ onSidebarToggle, onSidebarCollapseToggle }) => {
   const { user } = useSelector((state) => state.auth);
@@ -202,7 +202,7 @@ const Navbar = ({ onSidebarToggle, onSidebarCollapseToggle }) => {
           {/* User Menu */}
           <Tooltip title="Account settings">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5 }}>
-              <Avatar src={user?.profilePicture} sx={{ bgcolor: '#6366f1', width: 36, height: 36, fontSize: '0.9rem', fontWeight: 600 }}>
+              <Avatar src={user?.hasProfilePicture ? `${baseURL}/api/users/${user.id}/avatar` : null} sx={{ bgcolor: '#6366f1', width: 36, height: 36, fontSize: '0.9rem', fontWeight: 600 }}>
                 {user?.name?.substring(0, 2).toUpperCase() || 'U'}
               </Avatar>
             </IconButton>

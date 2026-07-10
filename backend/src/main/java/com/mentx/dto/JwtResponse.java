@@ -12,5 +12,5 @@ public class JwtResponse {
     private String email;
     private String role;
     private String status;
-    private String profilePicture;
+    private boolean hasProfilePicture;
 }

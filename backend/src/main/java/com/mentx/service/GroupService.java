@@ -172,7 +172,7 @@ public class GroupService {
                 .role(user.getRole().name())
                 .status(user.getStatus().name())
                 .verified(user.isVerified())
-                .profilePicture(user.getProfilePicture())
+                .hasProfilePicture(user.getProfilePicture() != null && !user.getProfilePicture().isEmpty())
                 .createdAt(user.getCreatedAt())
                 .build();
     }

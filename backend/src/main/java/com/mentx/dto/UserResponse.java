@@ -17,6 +17,6 @@ public class UserResponse {
     private String role;
     private String status;
     private boolean verified;
-    private String profilePicture;
+    private boolean hasProfilePicture;
     private LocalDateTime createdAt;
 }

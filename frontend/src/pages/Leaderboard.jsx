@@ -119,7 +119,7 @@ const Leaderboard = () => {
                   <TableCell sx={{ fontWeight: row.userId === user?.id ? 700 : 500 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                       <Avatar
-                        src={row.profilePicture}
+                        src={row.hasProfilePicture ? `${baseURL}/api/users/${row.id}/avatar` : null}
                         sx={{ width: 28, height: 28, fontSize: '0.8rem', bgcolor: '#6366f1' }}
                       >
                         {row.name?.substring(0, 2).toUpperCase() || 'U'}

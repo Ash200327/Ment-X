@@ -83,7 +83,7 @@ const MenteeGroups = () => {
                     <Paper variant="outlined" sx={{ p: 3, borderColor: '#1f2937', bgcolor: 'rgba(0,0,0,0.1)' }}>
                       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 2 }}>
                         <Avatar 
-                          src={group.mentor.profilePicture} 
+                          src={group.mentor?.hasProfilePicture ? `${baseURL}/api/users/${group.mentor.id}/avatar` : null} 
                           sx={{ width: 80, height: 80, bgcolor: '#6366f1', border: '2px solid #374151' }}
                         >
                           {group.mentor.name?.substring(0, 2).toUpperCase() || 'M'}
@@ -122,7 +122,7 @@ const MenteeGroups = () => {
                             alignItems: 'center',
                             gap: 2
                           }}>
-                            <Avatar src={member.profilePicture} sx={{ width: 44, height: 44, bgcolor: '#10b981' }}>
+                            <Avatar src={member.hasProfilePicture ? `${baseURL}/api/users/${member.id}/avatar` : null} sx={{ width: 44, height: 44, bgcolor: '#10b981' }}>
                               {member.name?.substring(0, 2).toUpperCase() || 'U'}
                             </Avatar>
                             <Box sx={{ flexGrow: 1, minWidth: 0 }}>

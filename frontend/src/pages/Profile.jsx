@@ -3,7 +3,7 @@ import { Container, Card, CardContent, Typography, TextField, Button, Box, Grid,
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateProfileSuccess } from '../store/authSlice';
-import axiosInstance from '../api/axiosInstance';
+import axiosInstance, { baseURL } from '../api/axiosInstance';
 
 const Profile = () => {
   const { user } = useSelector((state) => state.auth);
@@ -12,7 +12,7 @@ const Profile = () => {
   const [name, setName] = useState(user?.name || '');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [profilePicture, setProfilePicture] = useState(user?.profilePicture || '');
+  const [profilePicture, setProfilePicture] = useState(user?.hasProfilePicture ? `/api/users//avatar` : '');
   const [fileError, setFileError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
@@ -52,7 +52,7 @@ const Profile = () => {
       const response = await axiosInstance.put('/api/auth/profile', {
         name,
         newPassword: password || null,
-        profilePicture: profilePicture || null
+        profilePicture: (profilePicture && profilePicture.startsWith('data:')) ? profilePicture : null
       });
       dispatch(updateProfileSuccess(response.data));
       setSuccess('Profile updated successfully!');

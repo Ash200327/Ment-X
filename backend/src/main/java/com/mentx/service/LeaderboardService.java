@@ -83,7 +83,7 @@ public class LeaderboardService {
                     .completedTasks(completedTasks)
                     .consistencyBadge(consistencyBadge)
                     .topPerformer(false) // Will be calculated after sorting
-                    .profilePicture(mentee.getProfilePicture())
+                    .hasProfilePicture(mentee.getProfilePicture() != null && !mentee.getProfilePicture().isEmpty())
                     .averageScore(averageScore)
                     .activeWeeks(activeWeeks)
                     .eligible(eligible)

@@ -18,7 +18,7 @@ public class LeaderboardResponse {
     private Long completedTasks;
     private boolean consistencyBadge;
     private boolean topPerformer;
-    private String profilePicture;
+    private boolean hasProfilePicture;
     private Double averageScore;
     private Integer activeWeeks;
     private boolean eligible;
