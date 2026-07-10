@@ -71,7 +71,7 @@ export default function AdminGroupsScreen() {
                 ) : (
                   <Avatar.Text 
                     size={40} 
-                    label={group.mentor?.name?.substring(0, 2).toUpperCase() || 'M'} 
+                    label={(group.mentor?.name || 'M').substring(0, 2).toUpperCase()} 
                     style={{ backgroundColor: theme.colors.primary }}
                   />
                 )}

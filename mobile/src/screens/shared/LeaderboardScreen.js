@@ -95,7 +95,7 @@ export default function LeaderboardScreen() {
             ) : (
               <Avatar.Text 
                 size={46} 
-                label={item.name?.substring(0, 2).toUpperCase() || 'U'} 
+                label={(item.name || 'U').substring(0, 2).toUpperCase()} 
                 style={[styles.avatar, { backgroundColor: theme.colors.primaryContainer, borderColor: getRankBadgeColor(item.rank) }]} 
                 color={theme.colors.onPrimaryContainer}
               />

@@ -89,7 +89,7 @@ const ProfileScreen = () => {
               ) : (
                 <Avatar.Text 
                   size={100} 
-                  label={name?.substring(0, 2).toUpperCase() || 'U'} 
+                  label={(name || 'U').substring(0, 2).toUpperCase()} 
                   style={styles.avatarTextOnly} 
                 />
               )}

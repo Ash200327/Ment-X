@@ -187,7 +187,7 @@ export default function MentorGroupsScreen() {
                     <Avatar.Text 
                       {...props}
                       size={40} 
-                      label={member.name?.substring(0, 2).toUpperCase() || 'U'}
+                      label={(member.name || 'U').substring(0, 2).toUpperCase()}
                       style={[props.style, { backgroundColor: '#10b981' }]}
                     />
                   )

@@ -149,7 +149,7 @@ export default function UserApprovalScreen() {
                 <Card.Title
                   title={row.name}
                   subtitle={row.email}
-                  left={(props) => <Avatar.Text {...props} size={40} label={row.name.substring(0, 2).toUpperCase()} style={{backgroundColor: theme.colors.primaryContainer}} color={theme.colors.onPrimaryContainer} />}
+                  left={(props) => <Avatar.Text {...props} size={40} label={(row.name || 'U').substring(0, 2).toUpperCase()} style={{backgroundColor: theme.colors.primaryContainer}} color={theme.colors.onPrimaryContainer} />}
                   titleStyle={{ fontWeight: 'bold' }}
                 />
                 <Card.Content>
