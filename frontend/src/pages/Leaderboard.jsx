@@ -5,7 +5,7 @@ import FlameIcon from '@mui/icons-material/LocalFireDepartment';
 import CrownIcon from '@mui/icons-material/MilitaryTech';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { useSelector } from 'react-redux';
-import axiosInstance from '../api/axiosInstance';
+import axiosInstance, { baseURL } from '../api/axiosInstance';
 
 const Leaderboard = () => {
   const { user } = useSelector((state) => state.auth);

@@ -3,7 +3,7 @@ import { Container, Grid, Typography, Card, CardContent, Box, Avatar, Divider, C
 import PeopleIcon from '@mui/icons-material/People';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import { useSelector } from 'react-redux';
-import axiosInstance from '../../api/axiosInstance';
+import axiosInstance, { baseURL } from '../../api/axiosInstance';
 
 const MenteeGroups = () => {
   const { user } = useSelector((state) => state.auth);
