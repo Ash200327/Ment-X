@@ -81,6 +81,7 @@ public class User {
     private List<Notification> notifications;
 
     @Column(name = "profile_picture", columnDefinition = "TEXT")
+    @JsonIgnore
     private String profilePicture;
 
     @Column(name = "created_at", nullable = false, updatable = false)
