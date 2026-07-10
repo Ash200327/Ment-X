@@ -40,6 +40,16 @@ const authSlice = createSlice({
 export const { loginSuccess, logout, updateProfileSuccess, restoreToken } = authSlice.actions;
 
 // Thunks for async storage
+export const updateProfile = (userData) => async (dispatch, getState) => {
+  dispatch(updateProfileSuccess(userData));
+  try {
+    const updatedUser = getState().auth.user;
+    await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+  } catch (error) {
+    console.error('Error updating profile in storage', error);
+  }
+};
+
 export const login = (token, userData) => async (dispatch) => {
   try {
     await AsyncStorage.setItem('token', token);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { Text, Card, Title, Paragraph, ActivityIndicator, useTheme, Divider, Avatar, List } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
@@ -18,7 +18,7 @@ export default function MenteeGroupsScreen({ route }) {
       const res = await axiosInstance.get('/api/groups/my-groups');
       setGroups(res.data);
       setError('');
-    } catch (e) {
+    } catch (_e) {
       setError("Failed to fetch group details.");
     } finally {
       setLoading(false);
@@ -61,7 +61,7 @@ export default function MenteeGroupsScreen({ route }) {
           <Card.Content>
             <Title style={{ textAlign: 'center' }}>No Groups Found</Title>
             <Paragraph style={{ textAlign: 'center', marginTop: 8, color: theme.colors.onSurfaceVariant }}>
-              You haven't been added to any mentorship groups yet. Please contact your mentor or administrator.
+              You haven{"'"}t been added to any mentorship groups yet. Please contact your mentor or administrator.
             </Paragraph>
           </Card.Content>
         </Card>

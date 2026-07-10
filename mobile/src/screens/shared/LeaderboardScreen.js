@@ -12,7 +12,7 @@ export default function LeaderboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const theme = useTheme();
 
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = useCallback(async () => {
     try {
       const res = await axiosInstance.get('/api/leaderboard');
       setLeaderboard(res.data);
@@ -22,16 +22,17 @@ export default function LeaderboardScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchLeaderboard();
-  }, []);
+  }, [fetchLeaderboard]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchLeaderboard();
-  }, []);
+  }, [fetchLeaderboard]);
 
   const handleResetScores = () => {
     RNAlert.alert(
@@ -47,7 +48,7 @@ export default function LeaderboardScreen() {
               await axiosInstance.post('/api/admin/reset-scores');
               RNAlert.alert("Success", "All scores have been reset successfully.");
               fetchLeaderboard();
-            } catch (e) {
+            } catch (_e) {
               RNAlert.alert("Error", "Failed to reset scores.");
             }
           }
@@ -90,7 +91,7 @@ export default function LeaderboardScreen() {
             )}
             
             {item.hasProfilePicture ? (
-              <Avatar.Image size={46} source={{ uri: `${baseURL}/api/users/${item.id}/avatar` }} style={[styles.avatar, { borderColor: getRankBadgeColor(item.rank) }]} />
+              <Avatar.Image size={46} source={{ uri: `${baseURL}/api/users/${item.userId}/avatar` }} style={[styles.avatar, { borderColor: getRankBadgeColor(item.rank) }]} />
             ) : (
               <Avatar.Text 
                 size={46} 

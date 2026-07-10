@@ -21,7 +21,10 @@ const Navbar = ({ onSidebarToggle, onSidebarCollapseToggle }) => {
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
   const handleCloseUserMenu = () => setAnchorElUser(null);
 
-  const handleOpenNotifMenu = (event) => setAnchorElNotif(event.currentTarget);
+  const handleOpenNotifMenu = (event) => {
+    setAnchorElNotif(event.currentTarget);
+    fetchNotifications();
+  };
   const handleCloseNotifMenu = () => setAnchorElNotif(null);
 
   const fetchNotifications = async () => {
@@ -29,18 +32,25 @@ const Navbar = ({ onSidebarToggle, onSidebarCollapseToggle }) => {
     try {
       const res = await axiosInstance.get('/api/notifications');
       setNotifications(res.data);
-      // Calculate unread count locally to save bandwidth
-      const unreadCountLocal = res.data.filter(n => !n.readStatus).length;
-      setUnreadCount(unreadCountLocal);
     } catch (e) {
       console.error("Failed to load notifications", e);
     }
   };
 
+  const fetchUnreadCount = async () => {
+    if (!user) return;
+    try {
+      const res = await axiosInstance.get('/api/notifications/unread-count');
+      setUnreadCount(res.data);
+    } catch (e) {
+      console.error("Failed to load unread count", e);
+    }
+  };
+
   useEffect(() => {
-    fetchNotifications();
+    fetchUnreadCount();
     // Poll every 90 seconds to preserve Render free-tier bandwidth
-    const interval = setInterval(fetchNotifications, 90000);
+    const interval = setInterval(fetchUnreadCount, 90000);
     return () => clearInterval(interval);
   }, [user]);
 

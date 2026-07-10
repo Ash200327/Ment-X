@@ -82,7 +82,7 @@ export default function LoginScreen({ navigation }) {
 
         <TouchableOpacity onPress={() => navigation.navigate('Register')}>
           <Text style={{ marginTop: 15, color: theme.colors.primary, textAlign: 'center' }}>
-            Don't have an account? Register
+            Don{"'"}t have an account? Register
           </Text>
         </TouchableOpacity>
       </GlassView>

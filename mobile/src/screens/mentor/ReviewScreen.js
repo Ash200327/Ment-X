@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { Text, Card, Button, useTheme, ActivityIndicator, List, Portal, Dialog, TextInput, SegmentedButtons, Chip, Divider } from 'react-native-paper';
+import { Text, Card, Button, useTheme, ActivityIndicator, Portal, Dialog, TextInput, SegmentedButtons, Divider } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import axiosInstance from '../../api/axiosInstance';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 export default function ReviewScreen() {
   const theme = useTheme();
@@ -22,7 +21,6 @@ export default function ReviewScreen() {
 
   // Manual Score Dialog State
   const [manualScoreDialogOpen, setManualScoreDialogOpen] = useState(false);
-  const [mentees, setMentees] = useState([]);
   const [targetMenteeId, setTargetMenteeId] = useState('');
   const [manualWeekNumber, setManualWeekNumber] = useState('1');
   const [manualScore, setManualScore] = useState('10');
@@ -58,18 +56,7 @@ export default function ReviewScreen() {
     fetchAssignments();
   };
 
-  const fetchMentees = async () => {
-    try {
-      const res = await axiosInstance.get('/api/notifications/recipients');
-      const filtered = res.data.filter(u => u.role === 'MENTEE');
-      setMentees(filtered);
-    } catch(e) {
-      console.log(e);
-    }
-  };
-
   const handleOpenManualScore = () => {
-    fetchMentees();
     setManualScoreDialogOpen(true);
   };
 
@@ -122,7 +109,7 @@ export default function ReviewScreen() {
             const remarkRes = await axiosInstance.get(`/api/reviews/updates/${updateRes.value.data.id}/remark`);
             setRemark(remarkRes.data.remark);
             setReviewStatus(remarkRes.data.reviewStatus);
-          } catch(e) {}
+          } catch(_e) {}
         }
       } else {
         throw new Error("Failed to load submission update");
@@ -133,7 +120,7 @@ export default function ReviewScreen() {
       }
 
       setDialogOpen(true);
-    } catch (e) {
+    } catch (_e) {
       Alert.alert("Error", "Failed to load submission details or no submission was found");
       setSelectedAssignment(null);
     }
@@ -152,7 +139,7 @@ export default function ReviewScreen() {
       Alert.alert("Success", "Submission reviewed successfully");
       setDialogOpen(false);
       fetchAssignments();
-    } catch (e) {
+    } catch (_e) {
       Alert.alert("Error", "Failed to submit review");
     }
   };

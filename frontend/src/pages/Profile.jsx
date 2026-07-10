@@ -12,7 +12,7 @@ const Profile = () => {
   const [name, setName] = useState(user?.name || '');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [profilePicture, setProfilePicture] = useState(user?.hasProfilePicture ? `/api/users//avatar` : '');
+  const [profilePicture, setProfilePicture] = useState(user?.hasProfilePicture ? `${baseURL}/api/users/${user.id}/avatar` : '');
   const [fileError, setFileError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');

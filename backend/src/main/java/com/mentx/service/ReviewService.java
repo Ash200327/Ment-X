@@ -147,11 +147,7 @@ public class ReviewService {
         }
 
         // Update if a manual score exists for this mentee and week (without an assignment)
-        Optional<Score> existingManualScoreOpt = scoreRepository.findAll().stream()
-                .filter(s -> s.getMentee().getId().equals(mentee.getId()) 
-                        && s.getWeekNumber().equals(request.getWeekNumber()) 
-                        && s.getAssignment() == null)
-                .findFirst();
+        Optional<Score> existingManualScoreOpt = scoreRepository.findByMenteeAndWeekNumberAndAssignmentIsNull(mentee, request.getWeekNumber());
 
         Score scoreEntry;
         if (existingManualScoreOpt.isPresent()) {

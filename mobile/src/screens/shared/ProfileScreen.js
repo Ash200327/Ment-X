@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Text, TextInput, Button, Card, Avatar, useTheme, Snackbar, ActivityIndicator } from 'react-native-paper';
+import { Text, TextInput, Button, Card, Avatar, useTheme, Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { logoutUser, updateProfileSuccess } from '../../store/authSlice';
+import { logoutUser, updateProfile } from '../../store/authSlice';
 import axiosInstance, { baseURL } from '../../api/axiosInstance';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -61,7 +61,7 @@ const ProfileScreen = () => {
         newPassword: password || null,
         profilePicture: (profilePicture && profilePicture.startsWith('data:')) ? profilePicture : null
       });
-      dispatch(updateProfileSuccess(response.data));
+      dispatch(updateProfile(response.data));
       showSnackbar("Profile updated successfully!");
       setPassword('');
       setConfirmPassword('');

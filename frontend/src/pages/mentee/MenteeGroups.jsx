@@ -86,11 +86,11 @@ const MenteeGroups = () => {
                           src={group.mentor?.hasProfilePicture ? `${baseURL}/api/users/${group.mentor.id}/avatar` : null} 
                           sx={{ width: 80, height: 80, bgcolor: '#6366f1', border: '2px solid #374151' }}
                         >
-                          {group.mentor.name?.substring(0, 2).toUpperCase() || 'M'}
+                          {group.mentor?.name?.substring(0, 2).toUpperCase() || 'M'}
                         </Avatar>
                         <Box>
                           <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                            {group.mentor.name}
+                            {group.mentor?.name || 'Unknown Mentor'}
                           </Typography>
                           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
                             Mentor-in-Charge
@@ -99,7 +99,7 @@ const MenteeGroups = () => {
                         <Divider sx={{ width: '100%' }} />
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary', width: '100%', justifyContent: 'center' }}>
                           <MailOutlineIcon sx={{ fontSize: '1.1rem' }} />
-                          <Typography variant="body2" sx={{ wordBreak: 'break-all' }}>{group.mentor.email}</Typography>
+                          <Typography variant="body2" sx={{ wordBreak: 'break-all' }}>{group.mentor?.email}</Typography>
                         </Box>
                       </Box>
                     </Paper>

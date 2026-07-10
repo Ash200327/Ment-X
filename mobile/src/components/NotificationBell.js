@@ -8,13 +8,12 @@ export default function NotificationBell() {
   const theme = useTheme();
   const navigation = useNavigation();
   const [unreadCount, setUnreadCount] = useState(0);
-  const scaleValue = new Animated.Value(1);
+  const [scaleValue] = useState(() => new Animated.Value(1));
 
   const fetchUnreadCount = async () => {
     try {
-      const res = await axiosInstance.get('/api/notifications');
-      const unread = res.data.filter(n => !n.readStatus).length;
-      setUnreadCount(unread);
+      const res = await axiosInstance.get('/api/notifications/unread-count');
+      setUnreadCount(res.data);
     } catch (e) {
       console.log('Failed to fetch notifications for bell', e);
     }
@@ -63,7 +62,7 @@ export default function NotificationBell() {
     return () => {
       if (animation) animation.stop();
     };
-  }, [unreadCount]);
+  }, [unreadCount, scaleValue]);
 
   return (
     <View style={styles.container}>

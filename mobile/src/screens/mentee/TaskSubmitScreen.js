@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, StyleSheet, FlatList, RefreshControl, Modal, ScrollView, TouchableOpacity, Linking, Alert as RNAlert } from 'react-native';
+import { View, StyleSheet, FlatList, RefreshControl, Modal, ScrollView, Linking, Alert as RNAlert } from 'react-native';
 import { Text, Card, Button, ActivityIndicator, Chip, SegmentedButtons, TextInput, useTheme, IconButton } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axiosInstance from '../../api/axiosInstance';
@@ -31,7 +31,7 @@ export default function TaskSubmitScreen() {
   const [taskDetailsOpen, setTaskDetailsOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
 
-  const fetchAssignments = async () => {
+  const fetchAssignments = useCallback(async () => {
     try {
       const res = await axiosInstance.get('/api/tasks/mentee');
       setAssignments(res.data);
@@ -41,23 +41,24 @@ export default function TaskSubmitScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchAssignments();
-  }, []);
+  }, [fetchAssignments]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchAssignments();
-  }, []);
+  }, [fetchAssignments]);
 
   const handleMarkRead = async (id) => {
     try {
       await axiosInstance.patch(`/api/tasks/assignments/${id}/read`);
       RNAlert.alert("Success", "Task marked as read.");
       fetchAssignments();
-    } catch (e) {
+    } catch (_e) {
       RNAlert.alert("Error", "Failed to update status.");
     }
   };
@@ -67,7 +68,7 @@ export default function TaskSubmitScreen() {
       await axiosInstance.patch(`/api/tasks/assignments/${id}/start`);
       RNAlert.alert("Success", "Task marked as In Progress.");
       fetchAssignments();
-    } catch (e) {
+    } catch (_e) {
       RNAlert.alert("Error", "Failed to update status.");
     }
   };
@@ -84,7 +85,7 @@ export default function TaskSubmitScreen() {
         setSummary(updateRes.data.summary || '');
         setChallenges(updateRes.data.challenges || '');
         setCompletionPercentage(updateRes.data.completionPercentage || 50);
-      } catch (e) {}
+      } catch (_e) {}
     }
     
     setSubmitDialogOpen(true);
@@ -132,15 +133,15 @@ export default function TaskSubmitScreen() {
           try {
             const remarkRes = await axiosInstance.get(`/api/reviews/updates/${updateRes.value.data.id}/remark`);
             setRemark(remarkRes.data);
-          } catch (e) {}
+          } catch (_e) {}
         }
       }
 
       if (scoreRes.status === 'fulfilled') {
         setScore(scoreRes.value.data);
       }
-    } catch (e) {
-      console.log("Failed to fetch submission details", e);
+    } catch (_e) {
+      console.log("Failed to fetch submission details", _e);
     }
   };
 
@@ -173,7 +174,13 @@ export default function TaskSubmitScreen() {
           <Text 
             key={index} 
             style={{ color: '#3b82f6', textDecorationLine: 'underline' }} 
-            onPress={() => Linking.openURL(part)}
+            onPress={async () => {
+              try {
+                await Linking.openURL(part);
+              } catch (_e) {
+                RNAlert.alert("Error", "Failed to open link");
+              }
+            }}
           >
             {part}
           </Text>
@@ -374,7 +381,7 @@ export default function TaskSubmitScreen() {
                     {remark.reviewStatus}
                   </Chip>
                   <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>Remarks:</Text>
-                  <Text style={{ marginBottom: 10, fontWeight: '500', color: theme.colors.onSurface }}>"{remark.remark}"</Text>
+                  <Text style={{ marginBottom: 10, fontWeight: '500', color: theme.colors.onSurface }}>&quot;{remark.remark}&quot;</Text>
                   
                   {score && (
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>

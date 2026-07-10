@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
-import { Text, Card, Button, useTheme, ActivityIndicator, SegmentedButtons, IconButton, Divider, Avatar } from 'react-native-paper';
+import { Text, Card, Button, useTheme, ActivityIndicator, SegmentedButtons, IconButton, Avatar } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import axiosInstance from '../../api/axiosInstance';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -13,25 +13,25 @@ export default function UserApprovalScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [tabValue, setTabValue] = useState('pending'); // 'pending' or 'all'
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       let url = tabValue === 'pending' ? '/api/admin/pending-verifications' : '/api/admin/users';
       const res = await axiosInstance.get(url);
       setUsers(res.data);
-    } catch (e) {
-      console.log(e);
+    } catch (_e) {
+      console.log(_e);
       Alert.alert("Error", "Failed to fetch user accounts");
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [tabValue]);
 
   useFocusEffect(
     useCallback(() => {
       setLoading(true);
       fetchUsers();
-    }, [tabValue])
+    }, [fetchUsers])
   );
 
   const onRefresh = () => {
@@ -44,7 +44,7 @@ export default function UserApprovalScreen() {
       await axiosInstance.post(`/api/admin/verify/${id}`);
       Alert.alert("Success", "User account approved");
       fetchUsers();
-    } catch (e) {
+    } catch (_e) {
       Alert.alert("Error", "Failed to approve user");
     }
   };
@@ -57,7 +57,7 @@ export default function UserApprovalScreen() {
             await axiosInstance.post(`/api/admin/reject/${id}`);
             Alert.alert("Success", "User rejected");
             fetchUsers();
-          } catch (e) {
+          } catch (_e) {
             Alert.alert("Error", "Failed to reject");
           }
       }}
@@ -72,7 +72,7 @@ export default function UserApprovalScreen() {
             await axiosInstance.post(`/api/admin/suspend/${id}`);
             Alert.alert("Success", "User suspended");
             fetchUsers();
-          } catch (e) {
+          } catch (_e) {
             Alert.alert("Error", "Failed to suspend");
           }
       }}
@@ -84,7 +84,7 @@ export default function UserApprovalScreen() {
       await axiosInstance.post(`/api/admin/activate/${id}`);
       Alert.alert("Success", "User activated");
       fetchUsers();
-    } catch (e) {
+    } catch (_e) {
       Alert.alert("Error", "Failed to activate user");
     }
   };
@@ -97,7 +97,7 @@ export default function UserApprovalScreen() {
             await axiosInstance.delete(`/api/admin/delete/${id}`);
             Alert.alert("Success", "User deleted");
             fetchUsers();
-          } catch (e) {
+          } catch (_e) {
             Alert.alert("Error", "Failed to delete user");
           }
       }}

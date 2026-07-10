@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
-import { Text, Card, Title, Paragraph, Button, TextInput, List, IconButton, useTheme, SegmentedButtons, Dialog, Portal, Avatar } from 'react-native-paper';
+import { Text, Card, Title, Paragraph, Button, TextInput, List, IconButton, useTheme, SegmentedButtons, Dialog, Portal, Avatar, ActivityIndicator } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import axiosInstance, { baseURL } from '../../api/axiosInstance';
 
@@ -61,7 +61,7 @@ export default function MentorGroupsScreen() {
     try {
       const res = await axiosInstance.get(`/api/groups/${group.id}/members`);
       setMembers(res.data);
-    } catch (e) {
+    } catch (_e) {
       Alert.alert('Error', 'Failed to fetch group members.');
     }
   };
@@ -81,7 +81,7 @@ export default function MentorGroupsScreen() {
       setLoading(true);
       fetchAllData();
       handleSelectGroup(res.data);
-    } catch (e) {
+    } catch (_e) {
       Alert.alert('Error', 'Failed to create group.');
     } finally {
       setCreateLoading(false);
@@ -107,7 +107,7 @@ export default function MentorGroupsScreen() {
               }
               setLoading(true);
               fetchAllData();
-            } catch (e) {
+            } catch (_e) {
               Alert.alert('Error', 'Failed to delete group.');
             }
           }
@@ -141,7 +141,7 @@ export default function MentorGroupsScreen() {
               await axiosInstance.delete(`/api/groups/${activeGroup.id}/members/${menteeId}`);
               Alert.alert('Success', 'Member removed from group.');
               handleSelectGroup(activeGroup);
-            } catch (e) {
+            } catch (_e) {
               Alert.alert('Error', 'Failed to remove member.');
             }
           }
@@ -273,6 +273,14 @@ export default function MentorGroupsScreen() {
       </Card>
     );
   };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>

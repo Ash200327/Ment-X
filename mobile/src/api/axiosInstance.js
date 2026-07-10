@@ -1,6 +1,6 @@
+/* eslint-disable import/no-named-as-default-member */
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
 import { store } from '../store';
 import { logoutUser } from '../store/authSlice';
 

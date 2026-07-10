@@ -15,4 +15,5 @@ public interface ScoreRepository extends JpaRepository<Score, Long> {
     List<Score> findByAssignmentIn(List<TaskAssignment> assignments);
 
     List<Score> findByMentee(User mentee);
+    Optional<Score> findByMenteeAndWeekNumberAndAssignmentIsNull(User mentee, Integer weekNumber);
 }

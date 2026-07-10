@@ -4,9 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSelector, useDispatch } from 'react-redux';
 import { ActivityIndicator, View } from 'react-native';
-import { IconButton, useTheme } from 'react-native-paper';
 import { loadApp } from '../store/authSlice';
-import usePushNotifications from '../hooks/usePushNotifications';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import NotificationBell from '../components/NotificationBell';
 
@@ -75,7 +73,6 @@ const getTabBarIcon = (route, focused, color, size) => {
 };
 
 function MenteeTabs() {
-  const theme = useTheme();
   return (
     <Tab.Navigator screenOptions={({ route, navigation }) => ({ 
       headerShown: true,
@@ -94,7 +91,6 @@ function MenteeTabs() {
 }
 
 function MentorTabs() {
-  const theme = useTheme();
   return (
     <Tab.Navigator screenOptions={({ route, navigation }) => ({ 
       headerShown: true,
@@ -113,7 +109,6 @@ function MentorTabs() {
 }
 
 function AdminTabs() {
-  const theme = useTheme();
   return (
     <Tab.Navigator screenOptions={({ route, navigation }) => ({ 
       headerShown: true,

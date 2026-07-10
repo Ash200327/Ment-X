@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, Alert, KeyboardAvoidingView, Platform, Linking } from 'react-native';
-import { Text, Card, TextInput, Button, SegmentedButtons, useTheme, ActivityIndicator, List, IconButton, Dialog, Portal, Divider } from 'react-native-paper';
+import { Text, Card, TextInput, Button, SegmentedButtons, useTheme, ActivityIndicator, IconButton, Divider } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import axiosInstance from '../../api/axiosInstance';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -79,7 +79,7 @@ export default function TaskCreateScreen() {
 
   const getIndividualTasksReference = () => {
     if (!menteeId) return [];
-    const filtered = mentorAssignments.filter(row => !row.task.group && row.mentee.id === parseInt(menteeId));
+    const filtered = mentorAssignments.filter(row => !row.task.group && row.mentee?.id === parseInt(menteeId));
     const uniqueTasks = [];
     const seenTaskIds = new Set();
     for (const item of filtered) {
@@ -139,7 +139,7 @@ export default function TaskCreateScreen() {
               Alert.alert("Success", "Task deleted successfully");
               if (editingTaskId === taskId) handleCancelEdit();
               fetchOptions();
-            } catch (e) {
+            } catch (_e) {
               Alert.alert("Error", "Failed to delete task");
             }
           }
@@ -207,7 +207,13 @@ export default function TaskCreateScreen() {
           <Text 
             key={index} 
             style={{ color: '#3b82f6', textDecorationLine: 'underline' }} 
-            onPress={() => Linking.openURL(part)}
+            onPress={async () => {
+              try {
+                await Linking.openURL(part);
+              } catch (_e) {
+                Alert.alert("Error", "Failed to open link");
+              }
+            }}
           >
             {part}
           </Text>
@@ -349,7 +355,7 @@ export default function TaskCreateScreen() {
                 />
                 {showDatePicker && (
                   <DateTimePicker
-                    value={deadline ? new Date(deadline) : new Date()}
+                    value={deadline && !isNaN(new Date(deadline).getTime()) ? new Date(deadline) : new Date()}
                     mode="date"
                     display="default"
                     onChange={(event, selectedDate) => {

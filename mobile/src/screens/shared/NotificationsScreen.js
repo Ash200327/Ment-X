@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
-import { Text, Card, Title, Paragraph, Button, TextInput, List, IconButton, SegmentedButtons, useTheme, ActivityIndicator, Divider } from 'react-native-paper';
+import { Text, Card, Title, Paragraph, Button, TextInput, List, IconButton, SegmentedButtons, useTheme, ActivityIndicator } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import axiosInstance from '../../api/axiosInstance';
@@ -74,7 +74,7 @@ export default function NotificationsScreen() {
     try {
       await axiosInstance.patch(`/api/notifications/${id}/read`);
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, readStatus: true } : n));
-    } catch (e) {
+    } catch (_e) {
       Alert.alert('Error', 'Failed to mark notification as read');
     }
   };
@@ -83,7 +83,7 @@ export default function NotificationsScreen() {
     try {
       await axiosInstance.post('/api/notifications/read-all');
       setNotifications(prev => prev.map(n => ({ ...n, readStatus: true })));
-    } catch (e) {
+    } catch (_e) {
       Alert.alert('Error', 'Failed to mark all as read');
     }
   };

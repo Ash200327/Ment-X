@@ -74,7 +74,7 @@ const MenteeDashboard = () => {
               score: review.status === 'COMPLETED' ? myRankInfo?.weeklyScore || 0 : null
             };
           }
-        } catch (e) {
+        } catch (_e) {
           console.log("Failed to load remark details for a task");
         }
         return null;
@@ -91,6 +91,7 @@ const MenteeDashboard = () => {
   }, [user]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchDashboardData();
   }, [fetchDashboardData]);
 
@@ -221,7 +222,7 @@ const MenteeDashboard = () => {
                   </Chip>
                 </View>
                 <Text variant="bodyMedium" style={[styles.remarkText, { color: theme.colors.onSurfaceVariant }]}>
-                  "{item.remarkText}"
+                  &quot;{item.remarkText}&quot;
                 </Text>
                 {item.score !== null && (
                   <View style={styles.scoreRow}>

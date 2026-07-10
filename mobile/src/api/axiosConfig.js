@@ -1,3 +1,4 @@
+/* eslint-disable import/no-named-as-default-member */
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
