@@ -29,8 +29,9 @@ const Navbar = ({ onSidebarToggle, onSidebarCollapseToggle }) => {
     try {
       const res = await axiosInstance.get('/api/notifications');
       setNotifications(res.data);
-      const countRes = await axiosInstance.get('/api/notifications/unread-count');
-      setUnreadCount(countRes.data);
+      // Calculate unread count locally to save bandwidth
+      const unreadCountLocal = res.data.filter(n => !n.readStatus).length;
+      setUnreadCount(unreadCountLocal);
     } catch (e) {
       console.error("Failed to load notifications", e);
     }
@@ -38,8 +39,8 @@ const Navbar = ({ onSidebarToggle, onSidebarCollapseToggle }) => {
 
   useEffect(() => {
     fetchNotifications();
-    // Poll every 30 seconds for live updates
-    const interval = setInterval(fetchNotifications, 30000);
+    // Poll every 90 seconds to preserve Render free-tier bandwidth
+    const interval = setInterval(fetchNotifications, 90000);
     return () => clearInterval(interval);
   }, [user]);
 
