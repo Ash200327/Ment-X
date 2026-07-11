@@ -91,7 +91,7 @@ export default function MentorDashboard() {
 
       {/* Summary Cards */}
       <View style={styles.summaryContainer}>
-        <Card style={[styles.summaryCard, { borderLeftColor: '#6366f1', borderLeftWidth: 4 }]} onPress={() => {}}>
+        <Card style={[styles.summaryCard, { borderLeftColor: '#6366f1', borderLeftWidth: 4 }]} onPress={() => navigation.navigate('Groups')}>
           <Card.Content style={styles.cardContent}>
             <View>
               <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>My Groups</Text>

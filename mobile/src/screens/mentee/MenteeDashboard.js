@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
 import { Text, Card, ActivityIndicator, Chip, useTheme, Surface } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import axiosInstance from '../../api/axiosInstance';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const MenteeDashboard = () => {
   const theme = useTheme();
+  const navigation = useNavigation();
   const { user } = useSelector((state) => state.auth);
   
   const [stats, setStats] = useState({
@@ -96,10 +98,10 @@ const MenteeDashboard = () => {
   }, [fetchDashboardData]);
 
   const statsCards = [
-    { title: 'Total Points', value: stats.totalPoints, icon: 'star', color: '#8b5cf6' },
-    { title: 'Leaderboard Rank', value: stats.rank === '-' ? '-' : `#${stats.rank}`, icon: 'poll', color: '#0ea5e9' },
-    { title: 'Pending Tasks', value: stats.pendingTasks, icon: 'clipboard-text-clock', color: '#ef4444', highlight: stats.pendingTasks > 0 },
-    { title: 'Completed Tasks', value: stats.completedTasks, icon: 'clipboard-check', color: '#10b981' }
+    { title: 'Total Points', value: stats.totalPoints, icon: 'star', color: '#8b5cf6', screen: 'Leaderboard' },
+    { title: 'Leaderboard Rank', value: stats.rank === '-' ? '-' : `#${stats.rank}`, icon: 'poll', color: '#0ea5e9', screen: 'Leaderboard' },
+    { title: 'Pending Tasks', value: stats.pendingTasks, icon: 'clipboard-text-clock', color: '#ef4444', highlight: stats.pendingTasks > 0, screen: 'My Tasks' },
+    { title: 'Completed Tasks', value: stats.completedTasks, icon: 'clipboard-check', color: '#10b981', screen: 'My Tasks' }
   ];
 
   if (loading && !stats.totalPoints && !weeklyScores.weeks.length) {
@@ -145,23 +147,29 @@ const MenteeDashboard = () => {
       {/* Summary Cards */}
       <View style={styles.grid}>
         {statsCards.map((card, idx) => (
-          <Surface 
+          <TouchableOpacity 
             key={idx} 
-            style={[
-              styles.cardSurface, 
-              card.highlight && styles.highlightSurface,
-              { borderLeftColor: card.color, borderLeftWidth: 4 }
-            ]}
-            elevation={2}
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate(card.screen)}
+            style={styles.cardContainer}
           >
-            <View style={styles.cardContent}>
-              <View>
-                <Text variant="labelMedium" style={styles.cardTitle}>{card.title}</Text>
-                <Text variant="displaySmall" style={styles.cardValue}>{card.value}</Text>
+            <Surface 
+              style={[
+                styles.cardSurface, 
+                card.highlight && styles.highlightSurface,
+                { borderLeftColor: card.color, borderLeftWidth: 4 }
+              ]}
+              elevation={2}
+            >
+              <View style={styles.cardContent}>
+                <View>
+                  <Text variant="labelMedium" style={styles.cardTitle}>{card.title}</Text>
+                  <Text variant="displaySmall" style={styles.cardValue}>{card.value}</Text>
+                </View>
+                <MaterialCommunityIcons name={card.icon} size={36} color={card.color} style={{ opacity: 0.9 }} />
               </View>
-              <MaterialCommunityIcons name={card.icon} size={36} color={card.color} style={{ opacity: 0.9 }} />
-            </View>
-          </Surface>
+            </Surface>
+          </TouchableOpacity>
         ))}
       </View>
 
@@ -270,9 +278,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     padding: 8,
   },
-  cardSurface: {
+  cardContainer: {
     width: '46%',
     margin: '2%',
+  },
+  cardSurface: {
+    width: '100%',
     borderRadius: 12,
     padding: 16,
   },

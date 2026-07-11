@@ -94,7 +94,7 @@ export default function AdminDashboard() {
 
         <Card 
           style={[styles.summaryCard, { borderLeftColor: '#f59e0b', borderLeftWidth: 4 }, stats?.pendingVerifications > 0 && styles.highlightSurface]}
-          onPress={() => navigation.navigate('UserApprovalScreen')}
+          onPress={() => navigation.navigate('Approvals')}
         >
           <Card.Content style={styles.cardContent}>
             <View>
@@ -106,7 +106,10 @@ export default function AdminDashboard() {
         </Card>
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Card style={[styles.summaryCard, { flex: 1, marginRight: 6, borderLeftColor: '#0ea5e9', borderLeftWidth: 4 }]}>
+          <Card 
+            style={[styles.summaryCard, { flex: 1, marginRight: 6, borderLeftColor: '#0ea5e9', borderLeftWidth: 4 }]}
+            onPress={() => navigation.navigate('Groups')}
+          >
             <Card.Content style={styles.cardContent}>
               <View>
                 <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>Groups</Text>
