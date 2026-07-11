@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
-import { Text, Card, Title, Paragraph, Button, TextInput, List, IconButton, SegmentedButtons, useTheme, ActivityIndicator } from 'react-native-paper';
+import { Text, Card, Title, Paragraph, Button, TextInput, List, IconButton, SegmentedButtons, useTheme } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import axiosInstance from '../../api/axiosInstance';
+import TaskValidationLoader from '../../components/TaskValidationLoader';
 
 export default function NotificationsScreen() {
   const theme = useTheme();
@@ -130,7 +131,7 @@ export default function NotificationsScreen() {
 
   const renderInbox = () => {
     if (loading && !refreshing) {
-      return <ActivityIndicator size="large" style={{ marginTop: 32 }} />;
+      return <TaskValidationLoader />;
     }
 
     return (

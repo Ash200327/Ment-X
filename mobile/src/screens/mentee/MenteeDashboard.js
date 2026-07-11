@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
-import { Text, Card, ActivityIndicator, Chip, useTheme, Surface } from 'react-native-paper';
+import { Text, Card, Chip, useTheme, Surface } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import axiosInstance from '../../api/axiosInstance';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import TaskValidationLoader from '../../components/TaskValidationLoader';
 
 const MenteeDashboard = () => {
   const theme = useTheme();
@@ -105,11 +106,7 @@ const MenteeDashboard = () => {
   ];
 
   if (loading && !stats.totalPoints && !weeklyScores.weeks.length) {
-    return (
-      <View style={[styles.container, styles.center, { backgroundColor: theme.colors.background }]}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <TaskValidationLoader />;
   }
 
   return (

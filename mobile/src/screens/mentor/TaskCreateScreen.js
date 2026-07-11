@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, Alert, KeyboardAvoidingView, Platform, Linking } from 'react-native';
-import { Text, Card, TextInput, Button, SegmentedButtons, useTheme, ActivityIndicator, IconButton, Divider } from 'react-native-paper';
+import { Text, Card, TextInput, Button, SegmentedButtons, useTheme, IconButton, Divider } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import axiosInstance from '../../api/axiosInstance';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import TaskValidationLoader from '../../components/TaskValidationLoader';
 import { Picker } from '@react-native-picker/picker'; // We need a dropdown for selections
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -224,11 +225,7 @@ export default function TaskCreateScreen() {
   };
 
   if (pageLoading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <TaskValidationLoader />;
   }
 
   return (

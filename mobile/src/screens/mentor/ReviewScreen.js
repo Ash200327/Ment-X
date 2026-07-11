@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { Text, Card, Button, useTheme, ActivityIndicator, Portal, Dialog, TextInput, SegmentedButtons, Divider } from 'react-native-paper';
+import { Text, Card, Button, useTheme, Portal, Dialog, TextInput, SegmentedButtons, Divider } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import axiosInstance from '../../api/axiosInstance';
+import TaskValidationLoader from '../../components/TaskValidationLoader';
 
 export default function ReviewScreen() {
   const theme = useTheme();
@@ -152,11 +153,7 @@ export default function ReviewScreen() {
   };
 
   if (loading && !refreshing) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <TaskValidationLoader />;
   }
 
   return (

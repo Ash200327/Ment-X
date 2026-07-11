@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet, FlatList, Alert as RNAlert, RefreshControl } from 'react-native';
-import { Text, Card, Avatar, Button, ActivityIndicator, Chip, useTheme } from 'react-native-paper';
+import { Text, Card, Avatar, Button, Chip, useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axiosInstance, { baseURL } from '../../api/axiosInstance';
+import TaskValidationLoader from '../../components/TaskValidationLoader';
 
 export default function LeaderboardScreen() {
   const { user } = useSelector((state) => state.auth);
@@ -176,10 +177,7 @@ export default function LeaderboardScreen() {
       </View>
 
       {loading && !refreshing ? (
-        <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" />
-          <Text style={{ marginTop: 10, color: theme.colors.onBackground }}>Loading rankings...</Text>
-        </View>
+        <TaskValidationLoader />
       ) : (
         <FlatList
           data={leaderboard}

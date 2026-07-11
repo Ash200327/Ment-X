@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { Text, Card, Title, Paragraph, ActivityIndicator, useTheme, Divider, Avatar, List } from 'react-native-paper';
+import { Text, Card, Title, Paragraph, useTheme, Divider, Avatar, List } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import axiosInstance, { baseURL } from '../../api/axiosInstance';
+import TaskValidationLoader from '../../components/TaskValidationLoader';
 
 export default function MenteeGroupsScreen({ route }) {
   // In a real app we might use Redux, but for mobile we often rely on context or just visually indicate 'You' via props if needed.
@@ -38,11 +39,7 @@ export default function MenteeGroupsScreen({ route }) {
   };
 
   if (loading && !refreshing) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator animating={true} size="large" />
-      </View>
-    );
+    return <TaskValidationLoader />;
   }
 
   return (

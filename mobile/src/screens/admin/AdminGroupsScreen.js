@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { Text, Card, Title, Paragraph, ActivityIndicator, useTheme, Divider, Avatar } from 'react-native-paper';
+import { Text, Card, Title, Paragraph, useTheme, Divider, Avatar } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import axiosInstance, { baseURL } from '../../api/axiosInstance';
+import TaskValidationLoader from '../../components/TaskValidationLoader';
 
 export default function AdminGroupsScreen() {
   const [groups, setGroups] = useState([]);
@@ -34,11 +35,7 @@ export default function AdminGroupsScreen() {
   };
 
   if (loading && !refreshing) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator animating={true} size="large" />
-      </View>
-    );
+    return <TaskValidationLoader />;
   }
 
   return (

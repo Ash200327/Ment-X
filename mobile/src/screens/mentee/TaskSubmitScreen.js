@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet, FlatList, RefreshControl, Modal, ScrollView, Linking, Alert as RNAlert } from 'react-native';
-import { Text, Card, Button, ActivityIndicator, Chip, SegmentedButtons, TextInput, useTheme, IconButton } from 'react-native-paper';
+import { Text, Card, Button, Chip, SegmentedButtons, TextInput, useTheme, IconButton } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axiosInstance from '../../api/axiosInstance';
+import TaskValidationLoader from '../../components/TaskValidationLoader';
 
 export default function TaskSubmitScreen() {
   const [assignments, setAssignments] = useState([]);
@@ -261,9 +262,7 @@ export default function TaskSubmitScreen() {
       </View>
 
       {loading && !refreshing ? (
-        <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" />
-        </View>
+        <TaskValidationLoader />
       ) : (
         <FlatList
           data={filteredAssignments}

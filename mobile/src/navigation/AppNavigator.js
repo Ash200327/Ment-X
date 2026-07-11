@@ -3,10 +3,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSelector, useDispatch } from 'react-redux';
-import { ActivityIndicator, View } from 'react-native';
+// No react-native imports needed on these lines if unused
 import { loadApp } from '../store/authSlice';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import HeaderRight from '../components/HeaderRight';
+import TaskValidationLoader from '../components/TaskValidationLoader';
 
 // Auth Screens
 import LoginScreen from '../screens/auth/LoginScreen';
@@ -128,11 +129,7 @@ export default function AppNavigator({ theme }) {
   }, [dispatch]);
 
   if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <TaskValidationLoader />;
   }
 
   const renderMainTabs = () => {

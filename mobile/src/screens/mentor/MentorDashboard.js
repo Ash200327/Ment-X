@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { Text, Card, ActivityIndicator, useTheme, List, Button, ProgressBar, Divider } from 'react-native-paper';
+import { Text, Card, useTheme, List, Button, ProgressBar, Divider } from 'react-native-paper';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import axiosInstance from '../../api/axiosInstance';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import TaskValidationLoader from '../../components/TaskValidationLoader';
 
 export default function MentorDashboard() {
   const theme = useTheme();
@@ -73,11 +74,7 @@ export default function MentorDashboard() {
   };
 
   if (loading && !refreshing) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <TaskValidationLoader />;
   }
 
   return (

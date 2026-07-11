@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
-import { Text, Card, Button, useTheme, ActivityIndicator, SegmentedButtons, IconButton, Avatar } from 'react-native-paper';
+import { Text, Card, Button, useTheme, SegmentedButtons, IconButton, Avatar } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import axiosInstance from '../../api/axiosInstance';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import TaskValidationLoader from '../../components/TaskValidationLoader';
 
 export default function UserApprovalScreen() {
   const theme = useTheme();
@@ -129,9 +130,7 @@ export default function UserApprovalScreen() {
       </View>
 
       {loading && !refreshing ? (
-        <View style={styles.center}>
-          <ActivityIndicator size="large" />
-        </View>
+        <TaskValidationLoader />
       ) : (
         <ScrollView 
           style={styles.container}

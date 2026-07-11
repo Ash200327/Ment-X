@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
-import { Text, Card, Title, Paragraph, Button, TextInput, List, IconButton, useTheme, SegmentedButtons, Dialog, Portal, Avatar, ActivityIndicator } from 'react-native-paper';
+import { Text, Card, Title, Paragraph, Button, TextInput, List, IconButton, useTheme, SegmentedButtons, Dialog, Portal, Avatar } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import axiosInstance, { baseURL } from '../../api/axiosInstance';
+import TaskValidationLoader from '../../components/TaskValidationLoader';
 
 export default function MentorGroupsScreen() {
   const theme = useTheme();
@@ -275,11 +276,7 @@ export default function MentorGroupsScreen() {
   };
 
   if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <TaskValidationLoader />;
   }
 
   return (
