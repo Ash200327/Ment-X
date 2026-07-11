@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { ActivityIndicator, View } from 'react-native';
 import { loadApp } from '../store/authSlice';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import NotificationBell from '../components/NotificationBell';
+import HeaderRight from '../components/HeaderRight';
 
 // Auth Screens
 import LoginScreen from '../screens/auth/LoginScreen';
@@ -77,9 +77,7 @@ function MenteeTabs() {
     <Tab.Navigator screenOptions={({ route, navigation }) => ({ 
       headerShown: true,
       tabBarIcon: ({ focused, color, size }) => getTabBarIcon(route, focused, color, size),
-      headerRight: () => (
-        <NotificationBell />
-      )
+      headerRight: () => <HeaderRight />
     })}>
       <Tab.Screen name="Dashboard" component={MenteeDashboard} />
       <Tab.Screen name="My Groups" component={MenteeGroupsScreen} />
@@ -95,9 +93,7 @@ function MentorTabs() {
     <Tab.Navigator screenOptions={({ route, navigation }) => ({ 
       headerShown: true,
       tabBarIcon: ({ focused, color, size }) => getTabBarIcon(route, focused, color, size),
-      headerRight: () => (
-        <NotificationBell />
-      )
+      headerRight: () => <HeaderRight />
     })}>
       <Tab.Screen name="Dashboard" component={MentorDashboard} />
       <Tab.Screen name="Groups" component={MentorGroupsScreen} />
@@ -113,9 +109,7 @@ function AdminTabs() {
     <Tab.Navigator screenOptions={({ route, navigation }) => ({ 
       headerShown: true,
       tabBarIcon: ({ focused, color, size }) => getTabBarIcon(route, focused, color, size),
-      headerRight: () => (
-        <NotificationBell />
-      )
+      headerRight: () => <HeaderRight />
     })}>
       <Tab.Screen name="Dashboard" component={AdminDashboard} />
       <Tab.Screen name="Groups" component={AdminGroupsScreen} />
