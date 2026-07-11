@@ -84,6 +84,9 @@ public class User {
     @JsonIgnore
     private String profilePicture;
 
+    @Column(name = "push_token")
+    private String pushToken;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

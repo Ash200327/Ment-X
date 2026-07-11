@@ -8,6 +8,7 @@ import { loadApp } from '../store/authSlice';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import HeaderRight from '../components/HeaderRight';
 import TaskValidationLoader from '../components/TaskValidationLoader';
+import usePushNotifications from '../hooks/usePushNotifications';
 
 // Auth Screens
 import LoginScreen from '../screens/auth/LoginScreen';
@@ -122,6 +123,7 @@ function AdminTabs() {
 
 export default function AppNavigator({ theme }) {
   const { isAuthenticated, isLoading, user } = useSelector((state) => state.auth);
+  usePushNotifications(isAuthenticated);
   const dispatch = useDispatch();
 
   useEffect(() => {

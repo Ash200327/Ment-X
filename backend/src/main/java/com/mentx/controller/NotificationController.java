@@ -68,4 +68,17 @@ public class NotificationController {
             return ResponseEntity.badRequest().body(new AuthController.MessageResponse(e.getMessage()));
         }
     }
+
+    @PostMapping("/register-token")
+    public ResponseEntity<?> registerPushToken(@RequestBody TokenRequest tokenRequest, Principal principal) {
+        User user = getAuthenticatedUser(principal);
+        notificationService.registerPushToken(user, tokenRequest.getToken());
+        return ResponseEntity.ok(new AuthController.MessageResponse("Push token registered successfully."));
+    }
+
+    public static class TokenRequest {
+        private String token;
+        public String getToken() { return token; }
+        public void setToken(String token) { this.token = token; }
+    }
 }

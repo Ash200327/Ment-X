@@ -33,6 +33,54 @@ public class NotificationService {
     @Autowired
     private GroupMemberRepository groupMemberRepository;
 
+    private final java.net.http.HttpClient httpClient = java.net.http.HttpClient.newHttpClient();
+
+    @Transactional
+    public void registerPushToken(User user, String token) {
+        user.setPushToken(token);
+        userRepository.save(user);
+    }
+
+    public void sendPushNotificationAsync(String expoPushToken, String title, String body) {
+        if (expoPushToken == null || expoPushToken.trim().isEmpty()) {
+            return;
+        }
+        java.util.concurrent.CompletableFuture.runAsync(() -> {
+            try {
+                java.net.URI uri = java.net.URI.create("https://exp.host/--/api/v2/push/send");
+                String jsonPayload = String.format(
+                    "{\"to\":\"%s\",\"title\":\"%s\",\"body\":\"%s\",\"sound\":\"default\"}",
+                    escapeJson(expoPushToken),
+                    escapeJson(title),
+                    escapeJson(body)
+                );
+                java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                        .uri(uri)
+                        .header("Content-Type", "application/json")
+                        .header("Accept", "application/json")
+                        .POST(java.net.http.HttpRequest.BodyPublishers.ofString(jsonPayload))
+                        .build();
+                java.net.http.HttpResponse<String> response = httpClient.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() != 200) {
+                    System.err.println("Failed to send Expo push notification: " + response.body());
+                }
+            } catch (Exception e) {
+                System.err.println("Error sending Expo push notification: " + e.getMessage());
+            }
+        });
+    }
+
+    private String escapeJson(String str) {
+        if (str == null) return "";
+        return str.replace("\\", "\\\\")
+                  .replace("\"", "\\\"")
+                  .replace("\b", "\\b")
+                  .replace("\f", "\\f")
+                  .replace("\n", "\\n")
+                  .replace("\r", "\\r")
+                  .replace("\t", "\\t");
+    }
+
     @Transactional
     public void sendNotification(User user, String title, String message) {
         Notification notification = Notification.builder()
@@ -42,6 +90,9 @@ public class NotificationService {
                 .readStatus(false)
                 .build();
         notificationRepository.save(notification);
+        if (user.getPushToken() != null) {
+            sendPushNotificationAsync(user.getPushToken(), title, message);
+        }
     }
 
     public List<Notification> getNotificationsForUser(User user) {
@@ -107,13 +158,17 @@ public class NotificationService {
             for (GroupMember member : members) {
                 User target = member.getMentee();
                 if (target.isVerified()) {
+                    String fullMessage = request.getMessage() + " (Group Notice: " + group.getGroupName() + ", by " + sender.getName() + ")";
                     Notification notification = Notification.builder()
                             .user(target)
                             .title(request.getTitle())
-                            .message(request.getMessage() + " (Group Notice: " + group.getGroupName() + ", by " + sender.getName() + ")")
+                            .message(fullMessage)
                             .readStatus(false)
                             .build();
                     notificationRepository.save(notification);
+                    if (target.getPushToken() != null) {
+                        sendPushNotificationAsync(target.getPushToken(), request.getTitle(), fullMessage);
+                    }
                 }
             }
         } else if (request.getTargetUserId() != null) {
@@ -141,14 +196,18 @@ public class NotificationService {
                 throw new RuntimeException("Unauthorized: Unknown role.");
             }
 
+            String fullMessage = request.getMessage() + " (From: " + sender.getName() + ")";
             Notification notification = Notification.builder()
                     .user(target)
                     .title(request.getTitle())
-                    .message(request.getMessage() + " (From: " + sender.getName() + ")")
+                    .message(fullMessage)
                     .readStatus(false)
                     .build();
 
             notificationRepository.save(notification);
+            if (target.getPushToken() != null) {
+                sendPushNotificationAsync(target.getPushToken(), request.getTitle(), fullMessage);
+            }
         } else {
             throw new RuntimeException("Either targetUserId or targetGroupId must be specified.");
         }
