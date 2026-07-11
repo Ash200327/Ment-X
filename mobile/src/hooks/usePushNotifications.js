@@ -4,9 +4,9 @@ import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import axiosInstance from '../api/axiosConfig';
 
-const Notifications = Constants.appOwnership !== 'expo' ? require('expo-notifications') : null;
+import * as Notifications from 'expo-notifications';
 
-if (Notifications) {
+if (Platform.OS !== 'web') {
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
@@ -23,7 +23,7 @@ export default function usePushNotifications(isAuthenticated) {
   const responseListener = useRef();
 
   useEffect(() => {
-    if (!Notifications) return;
+    if (Platform.OS === 'web') return;
 
     if (isAuthenticated) {
       registerForPushNotificationsAsync().then(token => {
@@ -46,10 +46,10 @@ export default function usePushNotifications(isAuthenticated) {
 
     return () => {
       if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(notificationListener.current);
+        notificationListener.current.remove();
       }
       if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
+        responseListener.current.remove();
       }
     };
   }, [isAuthenticated]);
