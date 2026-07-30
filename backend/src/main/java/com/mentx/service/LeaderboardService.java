@@ -66,10 +66,14 @@ public class LeaderboardService {
             double averageScore = activeWeeks > 0 ? (double) totalScore / activeWeeks : 0.0;
             boolean eligible = activeWeeks >= 2;
 
-            // Consistency Badge logic: Completed at least 3 tasks and average score >= 8
+            // Consistency Badge logic: Completed at least 3 tasks and average task score >= 8
             boolean consistencyBadge = false;
-            if (completedTasks >= 3) {
-                double avg = (double) totalScore / completedTasks;
+            List<Score> assignmentScores = scores.stream()
+                    .filter(s -> s.getAssignment() != null)
+                    .collect(Collectors.toList());
+
+            if (completedTasks >= 3 && !assignmentScores.isEmpty()) {
+                double avg = assignmentScores.stream().mapToInt(Score::getScore).average().orElse(0.0);
                 if (avg >= 8.0) {
                     consistencyBadge = true;
                 }
@@ -90,19 +94,19 @@ public class LeaderboardService {
                     .build());
         }
 
-        // Sort by eligibility descending, average score descending, total score descending, completed tasks descending, name alphabetically
+        // Sort by eligibility descending, total score descending, completed tasks descending, average score descending, name alphabetically
         board.sort((a, b) -> {
             int eligibilityCompare = Boolean.compare(b.isEligible(), a.isEligible());
             if (eligibilityCompare != 0) return eligibilityCompare;
-
-            int averageCompare = Double.compare(b.getAverageScore(), a.getAverageScore());
-            if (averageCompare != 0) return averageCompare;
 
             int scoreCompare = Integer.compare(b.getTotalScore(), a.getTotalScore());
             if (scoreCompare != 0) return scoreCompare;
 
             int tasksCompare = Long.compare(b.getCompletedTasks(), a.getCompletedTasks());
             if (tasksCompare != 0) return tasksCompare;
+
+            int averageCompare = Double.compare(b.getAverageScore(), a.getAverageScore());
+            if (averageCompare != 0) return averageCompare;
 
             return a.getName().compareTo(b.getName());
         });
