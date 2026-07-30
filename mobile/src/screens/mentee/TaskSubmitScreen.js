@@ -226,21 +226,28 @@ export default function TaskSubmitScreen() {
       </Card.Content>
       
       <Card.Actions style={styles.cardActions}>
-        <Button mode="text" compact onPress={() => handleOpenTaskDetails(item.task)}>Details</Button>
-        {item.status === 'ASSIGNED' && (
-          <Button mode="outlined" compact onPress={() => handleMarkRead(item.id)}>Mark Read</Button>
-        )}
-        {['ASSIGNED', 'VIEWED'].includes(item.status) && (
-          <Button mode="contained" compact onPress={() => handleStartTask(item.id)}>Start Work</Button>
-        )}
-        {['IN_PROGRESS', 'NEEDS_IMPROVEMENT', 'SUBMITTED'].includes(item.status) && (
-          <Button mode="contained" compact buttonColor="#6366f1" onPress={() => handleOpenSubmit(item)}>
-            {item.status === 'SUBMITTED' ? 'Edit' : 'Submit'}
-          </Button>
-        )}
-        {['SUBMITTED', 'COMPLETED', 'NEEDS_IMPROVEMENT'].includes(item.status) && (
-          <Button mode="outlined" compact onPress={() => handleOpenDetails(item)}>Submission</Button>
-        )}
+        {(() => {
+          const isOverdue = new Date(item.task.deadline) < now;
+          return (
+            <>
+              <Button mode="text" compact onPress={() => handleOpenTaskDetails(item.task)}>Details</Button>
+              {item.status === 'ASSIGNED' && (
+                <Button mode="outlined" compact disabled={isOverdue} onPress={() => handleMarkRead(item.id)}>Mark Read</Button>
+              )}
+              {['ASSIGNED', 'VIEWED'].includes(item.status) && (
+                <Button mode="contained" compact disabled={isOverdue} onPress={() => handleStartTask(item.id)}>Start Work</Button>
+              )}
+              {['IN_PROGRESS', 'NEEDS_IMPROVEMENT', 'SUBMITTED'].includes(item.status) && (
+                <Button mode="contained" compact disabled={isOverdue} buttonColor="#6366f1" onPress={() => handleOpenSubmit(item)}>
+                  {item.status === 'SUBMITTED' ? 'Edit' : 'Submit'}
+                </Button>
+              )}
+              {['SUBMITTED', 'COMPLETED', 'NEEDS_IMPROVEMENT'].includes(item.status) && (
+                <Button mode="outlined" compact onPress={() => handleOpenDetails(item)}>Submission</Button>
+              )}
+            </>
+          );
+        })()}
       </Card.Actions>
     </Card>
   );
