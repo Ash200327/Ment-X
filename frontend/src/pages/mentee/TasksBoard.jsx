@@ -17,9 +17,14 @@ const TasksBoard = () => {
   const [success, setSuccess] = useState('');
   const [filterType, setFilterType] = useState('ACTIVE'); // 'ACTIVE' or 'SUBMITTED'
 
-  const activeAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status));
+  const now = new Date();
+  const activeAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status) && new Date(r.task.deadline) >= now);
   const pastAssignments = assignments.filter(r => ['SUBMITTED', 'COMPLETED'].includes(r.status));
-  const filteredAssignments = filterType === 'ACTIVE' ? activeAssignments : pastAssignments;
+  const overdueAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status) && new Date(r.task.deadline) < now);
+  const filteredAssignments = 
+    filterType === 'ACTIVE' ? activeAssignments : 
+    filterType === 'SUBMITTED' ? pastAssignments : 
+    overdueAssignments;
 
   // Update submission form state
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
@@ -235,6 +240,13 @@ const TasksBoard = () => {
           >
             Past Submitted Tasks ({pastAssignments.length})
           </Button>
+          <Button
+            variant={filterType === 'OVERDUE' ? 'contained' : 'outlined'}
+            color="error"
+            onClick={() => setFilterType('OVERDUE')}
+          >
+            Missed Tasks ({overdueAssignments.length})
+          </Button>
         </Box>
       </Box>
 
@@ -267,7 +279,7 @@ const TasksBoard = () => {
       ) : filteredAssignments.length === 0 ? (
         <Card sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', p: 5 }}>
           <Typography color="text.secondary">
-            {filterType === 'ACTIVE' ? 'No active tasks found.' : 'No past submitted tasks found.'}
+            {filterType === 'ACTIVE' ? 'No active tasks found.' : filterType === 'SUBMITTED' ? 'No past submitted tasks found.' : 'No missed/overdue tasks found.'}
           </Typography>
         </Card>
       ) : (

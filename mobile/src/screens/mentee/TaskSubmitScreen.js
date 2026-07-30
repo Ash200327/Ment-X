@@ -12,9 +12,14 @@ export default function TaskSubmitScreen() {
   const [filterType, setFilterType] = useState('ACTIVE');
   const theme = useTheme();
 
-  const activeAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status));
+  const now = new Date();
+  const activeAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status) && new Date(r.task.deadline) >= now);
   const pastAssignments = assignments.filter(r => ['SUBMITTED', 'COMPLETED'].includes(r.status));
-  const filteredAssignments = filterType === 'ACTIVE' ? activeAssignments : pastAssignments;
+  const overdueAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status) && new Date(r.task.deadline) < now);
+  const filteredAssignments = 
+    filterType === 'ACTIVE' ? activeAssignments : 
+    filterType === 'SUBMITTED' ? pastAssignments : 
+    overdueAssignments;
 
   // Modals state
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
@@ -249,6 +254,7 @@ export default function TaskSubmitScreen() {
           buttons={[
             { value: 'ACTIVE', label: `Active (${activeAssignments.length})` },
             { value: 'SUBMITTED', label: `Past (${pastAssignments.length})` },
+            { value: 'OVERDUE', label: `Missed (${overdueAssignments.length})` },
           ]}
           style={{ width: '100%' }}
         />
