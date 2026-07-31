@@ -9,3 +9,8 @@
   ```bash
   eas update --branch production --message "your message"
   ```
+
+# Git Operations Rule
+
+- **Manual Git Executions**: Never run Git add, commit, or push commands directly on the terminal. Always generate and output the exact Git commands so the user can execute them manually.
+

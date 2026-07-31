@@ -34,5 +34,5 @@ Thumbs.db
 .gemini/
 
 # Architecture Documentation
-ARCHITECTURE.md
+*.md
 

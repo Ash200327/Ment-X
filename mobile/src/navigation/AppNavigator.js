@@ -100,6 +100,7 @@ function MentorTabs() {
       <Tab.Screen name="Groups" component={MentorGroupsScreen} />
       <Tab.Screen name="Create Task" component={TaskCreateScreen} />
       <Tab.Screen name="Reviews" component={ReviewScreen} />
+      <Tab.Screen name="Leaderboard" component={LeaderboardScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
@@ -115,6 +116,7 @@ function AdminTabs() {
       <Tab.Screen name="Dashboard" component={AdminDashboard} />
       <Tab.Screen name="Groups" component={AdminGroupsScreen} />
       <Tab.Screen name="Approvals" component={UserApprovalScreen} />
+      <Tab.Screen name="Leaderboard" component={LeaderboardScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
