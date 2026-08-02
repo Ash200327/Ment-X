@@ -42,7 +42,9 @@ export default function TaskCreateScreen() {
       ]);
       setGroups(groupsRes.data);
       setMentees(menteesRes.data);
-      setMentorTasks(tasksRes.data);
+      
+      const sortedTasks = tasksRes.data.sort((a, b) => new Date(b.deadline) - new Date(a.deadline));
+      setMentorTasks(sortedTasks);
       setMentorAssignments(assignmentsRes.data);
     } catch (e) {
       console.log(e);
@@ -90,6 +92,14 @@ export default function TaskCreateScreen() {
       }
     }
     return uniqueTasks.sort((a, b) => b.weekNumber - a.weekNumber);
+  };
+
+  const getTaskTargetName = (task) => {
+    if (task.group) {
+      return task.group.groupName;
+    }
+    const assignment = mentorAssignments.find(a => a.task.id === task.id);
+    return assignment ? assignment.mentee.name : 'Individual';
   };
 
   const handleEditClick = (task) => {
@@ -453,7 +463,7 @@ export default function TaskCreateScreen() {
                       <Text variant="titleMedium" style={{ fontWeight: 'bold' }}>{task.title}</Text>
                     </View>
                     <Text variant="bodySmall" color={theme.colors.onSurfaceVariant}>
-                      Week {task.weekNumber} • {task.group ? 'Group' : 'Individual'} • Priority: <Text style={{ color: getPriorityColor(task.priority), fontWeight: 'bold' }}>{task.priority}</Text>
+                      Week {task.weekNumber} • {getTaskTargetName(task)} • Priority: <Text style={{ color: getPriorityColor(task.priority), fontWeight: 'bold' }}>{task.priority}</Text>
                     </Text>
                   </View>
                   <View style={{ flexDirection: 'row' }}>

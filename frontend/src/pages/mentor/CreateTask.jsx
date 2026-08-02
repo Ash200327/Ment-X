@@ -48,7 +48,8 @@ const CreateTask = () => {
     try {
       setTasksLoading(true);
       const res = await axiosInstance.get('/api/tasks/mentor');
-      setMentorTasks(res.data);
+      const sorted = res.data.sort((a, b) => new Date(b.deadline) - new Date(a.deadline));
+      setMentorTasks(sorted);
     } catch (e) {
       console.error("Failed to load tasks list", e);
     } finally {
@@ -140,6 +141,14 @@ const CreateTask = () => {
       }
     }
     return uniqueTasks.sort((a, b) => b.weekNumber - a.weekNumber);
+  };
+
+  const getTaskTargetName = (task) => {
+    if (task.group) {
+      return task.group.groupName;
+    }
+    const assignment = mentorAssignments.find(a => a.task.id === task.id);
+    return assignment ? assignment.mentee.name : 'Individual';
   };
 
   const handleEditClick = (task) => {
@@ -471,7 +480,7 @@ const CreateTask = () => {
                     </Typography>
                   </Box>
                 ) : (
-                  (assignType === 'group' ? getGroupTasksReference() : getIndividualTasksReference()).map((task) => (
+                  (assignType === 'group' ? getGroupTasksReference() : getIndividualTasksReference()).slice(0, 1).map((task) => (
                     <Card key={task.id} variant="outlined" sx={{ borderColor: '#1f2937', bgcolor: 'rgba(255,255,255,0.01)' }}>
                       <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
@@ -546,7 +555,7 @@ const CreateTask = () => {
                         <TableRow key={task.id} sx={{ '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.01)' } }}>
                           <TableCell sx={{ fontWeight: 600 }}>{task.title}</TableCell>
                           <TableCell align="center">{task.weekNumber}</TableCell>
-                          <TableCell>{task.group ? task.group.groupName : 'Individual'}</TableCell>
+                          <TableCell>{getTaskTargetName(task)}</TableCell>
                           <TableCell>{formatDeadline(task.deadline)}</TableCell>
                           <TableCell align="center">
                             <Chip label={task.priority} size="small" color={getPriorityColor(task.priority)} sx={{ fontWeight: 700, fontSize: '0.65rem' }} />
