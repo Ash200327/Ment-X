@@ -31,4 +31,10 @@ public interface TaskAssignmentRepository extends JpaRepository<TaskAssignment, 
 
     @Query("SELECT ta.mentee.id, COUNT(ta) FROM TaskAssignment ta WHERE ta.status = 'COMPLETED' GROUP BY ta.mentee.id")
     List<Object[]> countCompletedTasksGroupByMentee();
+
+    @Query("SELECT ta FROM TaskAssignment ta JOIN FETCH ta.task t LEFT JOIN FETCH t.group JOIN FETCH ta.mentee " +
+           "WHERE ta.status NOT IN ('COMPLETED', 'SUBMITTED') " +
+           "AND t.deadline <= :now " +
+           "AND ta.windowNotified = false")
+    List<TaskAssignment> findPendingWindowNotifications(@org.springframework.data.repository.query.Param("now") java.time.LocalDateTime now);
 }

@@ -37,6 +37,10 @@ public class TaskAssignment {
     @Column(name = "read_status", nullable = false)
     private boolean readStatus = false;
 
+    @Builder.Default
+    @Column(name = "window_notified", nullable = false, columnDefinition = "boolean default false")
+    private boolean windowNotified = false;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

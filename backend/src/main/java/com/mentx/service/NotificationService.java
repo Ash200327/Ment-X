@@ -33,6 +33,9 @@ public class NotificationService {
     @Autowired
     private GroupMemberRepository groupMemberRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     private final java.net.http.HttpClient httpClient = java.net.http.HttpClient.newHttpClient();
 
     @Transactional
@@ -93,6 +96,7 @@ public class NotificationService {
         if (user.getPushToken() != null) {
             sendPushNotificationAsync(user.getPushToken(), title, message);
         }
+        emailService.sendEmailAsync(user.getEmail(), title, message);
     }
 
     public List<Notification> getNotificationsForUser(User user) {
@@ -169,6 +173,7 @@ public class NotificationService {
                     if (target.getPushToken() != null) {
                         sendPushNotificationAsync(target.getPushToken(), request.getTitle(), fullMessage);
                     }
+                    emailService.sendEmailAsync(target.getEmail(), request.getTitle(), fullMessage);
                 }
             }
         } else if (request.getTargetUserId() != null) {
@@ -208,6 +213,7 @@ public class NotificationService {
             if (target.getPushToken() != null) {
                 sendPushNotificationAsync(target.getPushToken(), request.getTitle(), fullMessage);
             }
+            emailService.sendEmailAsync(target.getEmail(), request.getTitle(), fullMessage);
         } else {
             throw new RuntimeException("Either targetUserId or targetGroupId must be specified.");
         }
