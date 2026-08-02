@@ -50,7 +50,7 @@ public class EmailService {
                 String jsonPayload = objectMapper.writeValueAsString(payload);
 
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("https://api.brevo.com/v3/smtp/emails"))
+                        .uri(URI.create("https://api.brevo.com/v3/smtp/email"))
                         .header("api-key", apiKey)
                         .header("Content-Type", "application/json")
                         .header("Accept", "application/json")
