@@ -38,8 +38,12 @@ public class TaskAssignment {
     private boolean readStatus = false;
 
     @Builder.Default
-    @Column(name = "window_notified", nullable = false, columnDefinition = "boolean default false")
-    private boolean windowNotified = false;
+    @Column(name = "notified_9am", nullable = false, columnDefinition = "boolean default false")
+    private boolean notified9am = false;
+
+    @Builder.Default
+    @Column(name = "notified_5pm", nullable = false, columnDefinition = "boolean default false")
+    private boolean notified5pm = false;
 
     @NotNull
     @Enumerated(EnumType.STRING)

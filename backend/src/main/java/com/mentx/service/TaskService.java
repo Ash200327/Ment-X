@@ -189,9 +189,12 @@ public class TaskService {
 
         Task updatedTask = taskRepository.save(task);
 
-        // Notify all assigned mentees about the task update
         List<TaskAssignment> assignments = taskAssignmentRepository.findByTask(updatedTask);
         for (TaskAssignment assignment : assignments) {
+            assignment.setNotified9am(false);
+            assignment.setNotified5pm(false);
+            taskAssignmentRepository.save(assignment);
+
             notificationService.sendNotification(assignment.getMentee(), "Task Updated", 
                     String.format("Task details for '%s' have been updated by your mentor.", updatedTask.getTitle()));
         }

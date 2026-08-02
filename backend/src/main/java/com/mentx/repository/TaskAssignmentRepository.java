@@ -35,6 +35,12 @@ public interface TaskAssignmentRepository extends JpaRepository<TaskAssignment, 
     @Query("SELECT ta FROM TaskAssignment ta JOIN FETCH ta.task t LEFT JOIN FETCH t.group JOIN FETCH ta.mentee " +
            "WHERE ta.status NOT IN ('COMPLETED', 'SUBMITTED') " +
            "AND t.deadline <= :now " +
-           "AND ta.windowNotified = false")
-    List<TaskAssignment> findPendingWindowNotifications(@org.springframework.data.repository.query.Param("now") java.time.LocalDateTime now);
+           "AND ta.notified9am = false")
+    List<TaskAssignment> findPending9amNotifications(@org.springframework.data.repository.query.Param("now") java.time.LocalDateTime now);
+
+    @Query("SELECT ta FROM TaskAssignment ta JOIN FETCH ta.task t LEFT JOIN FETCH t.group JOIN FETCH ta.mentee " +
+           "WHERE ta.status NOT IN ('COMPLETED', 'SUBMITTED') " +
+           "AND t.deadline <= :now " +
+           "AND ta.notified5pm = false")
+    List<TaskAssignment> findPending5pmNotifications(@org.springframework.data.repository.query.Param("now") java.time.LocalDateTime now);
 }

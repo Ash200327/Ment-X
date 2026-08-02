@@ -19,37 +19,54 @@ public class TaskNotificationScheduler {
     @Autowired
     private NotificationService notificationService;
 
-    // Execute every hour
-    @Scheduled(cron = "0 0 * * * *")
+    // Run every day at 9:00 AM and 5:00 PM (Asia/Kolkata timezone aligned)
+    @Scheduled(cron = "0 0 9,17 * * *")
     @Transactional
     public void checkSubmissionWindows() {
         LocalDateTime now = LocalDateTime.now();
-        List<TaskAssignment> pending = taskAssignmentRepository.findPendingWindowNotifications(now);
+        int hour = now.getHour();
 
-        for (TaskAssignment ta : pending) {
-            User mentee = ta.getMentee();
-            String title = "Submission Window Open: " + ta.getTask().getTitle();
-            
-            // Format the deadline nicely
-            LocalDateTime maxAllowedTime = ta.getTask().getDeadline().toLocalDate().plusDays(1).atTime(23, 59, 59);
-            String message = String.format(
-                "Hi %s,\n\nThe submission window for your task '%s' is now open. " +
-                "Please submit your weekly progress update before the window closes on %s.",
-                mentee.getName(), 
-                ta.getTask().getTitle(), 
-                maxAllowedTime.toString().replace("T", " ")
-            );
-
-            try {
-                // sendNotification automatically saves in-app notification, triggers push notice, and sends mail!
-                notificationService.sendNotification(mentee, title, message);
-                
-                // Mark as notified so we don't send duplicates
-                ta.setWindowNotified(true);
-                taskAssignmentRepository.save(ta);
-            } catch (Exception e) {
-                System.err.println("Error triggering submission window notification for assignment ID " + ta.getId() + ": " + e.getMessage());
+        if (hour == 9) {
+            List<TaskAssignment> pending = taskAssignmentRepository.findPending9amNotifications(now);
+            for (TaskAssignment ta : pending) {
+                try {
+                    sendReminderEmail(ta);
+                    ta.setNotified9am(true);
+                    taskAssignmentRepository.save(ta);
+                } catch (Exception e) {
+                    System.err.println("Error sending 9 AM notification for assignment ID " + ta.getId() + ": " + e.getMessage());
+                }
+            }
+        } else if (hour == 17) {
+            List<TaskAssignment> pending = taskAssignmentRepository.findPending5pmNotifications(now);
+            for (TaskAssignment ta : pending) {
+                try {
+                    sendReminderEmail(ta);
+                    ta.setNotified5pm(true);
+                    taskAssignmentRepository.save(ta);
+                } catch (Exception e) {
+                    System.err.println("Error sending 5 PM notification for assignment ID " + ta.getId() + ": " + e.getMessage());
+                }
             }
         }
+    }
+
+    private void sendReminderEmail(TaskAssignment ta) {
+        User mentee = ta.getMentee();
+        String title = "Reminder: Submit Update for " + ta.getTask().getTitle();
+
+        // Calculate deadline display format (closes at 23:59:59 the following day)
+        LocalDateTime maxAllowedTime = ta.getTask().getDeadline().toLocalDate().plusDays(1).atTime(23, 59, 59);
+        String message = String.format(
+            "Hi %s,\n\nThis is a reminder that the submission window for your task '%s' is open. " +
+            "Please submit your weekly progress update before the window closes on %s.\n\n" +
+            "(Ignore if you have already submitted the update.)",
+            mentee.getName(),
+            ta.getTask().getTitle(),
+            maxAllowedTime.toString().replace("T", " ")
+        );
+
+        // sendNotification automatically logs the in-app notice, triggers push notification, and sends the email
+        notificationService.sendNotification(mentee, title, message);
     }
 }
