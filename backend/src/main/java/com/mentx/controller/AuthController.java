@@ -73,37 +73,7 @@ public class AuthController {
                 .stream().map(authService::convertToResponse).collect(java.util.stream.Collectors.toList()));
     }
 
-    @Autowired
-    private com.mentx.repository.TaskAssignmentRepository taskAssignmentRepository;
 
-    @Autowired
-    private com.mentx.repository.NotificationRepository notificationRepository;
-
-    @GetMapping("/debug-assignments")
-    public ResponseEntity<?> getAssignmentsDebug() {
-        return ResponseEntity.ok(taskAssignmentRepository.findAll().stream().map(ta -> java.util.Map.of(
-            "id", ta.getId(),
-            "menteeName", ta.getMentee() != null ? ta.getMentee().getName() : "Null",
-            "menteeEmail", ta.getMentee() != null ? ta.getMentee().getEmail() : "Null",
-            "taskTitle", ta.getTask() != null ? ta.getTask().getTitle() : "Null",
-            "deadline", ta.getTask() != null && ta.getTask().getDeadline() != null ? ta.getTask().getDeadline().toString() : "Null",
-            "status", ta.getStatus() != null ? ta.getStatus().toString() : "Null",
-            "notified9am", ta.isNotified9am(),
-            "notified5pm", ta.isNotified5pm()
-        )).collect(java.util.stream.Collectors.toList()));
-    }
-
-    @GetMapping("/debug-notifications")
-    public ResponseEntity<?> getNotificationsDebug() {
-        return ResponseEntity.ok(notificationRepository.findAll().stream().map(n -> java.util.Map.of(
-            "id", n.getId(),
-            "menteeName", n.getUser() != null ? n.getUser().getName() : "Null",
-            "menteeEmail", n.getUser() != null ? n.getUser().getEmail() : "Null",
-            "title", n.getTitle() != null ? n.getTitle() : "Null",
-            "message", n.getMessage() != null ? n.getMessage() : "Null",
-            "createdAt", n.getCreatedAt() != null ? n.getCreatedAt().toString() : "Null"
-        )).collect(java.util.stream.Collectors.toList()));
-    }
 
     // Helper Response DTO for sending simple text messages
     public static class MessageResponse {
