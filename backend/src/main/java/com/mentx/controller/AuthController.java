@@ -76,6 +76,9 @@ public class AuthController {
     @Autowired
     private com.mentx.repository.TaskAssignmentRepository taskAssignmentRepository;
 
+    @Autowired
+    private com.mentx.repository.NotificationRepository notificationRepository;
+
     @GetMapping("/debug-assignments")
     public ResponseEntity<?> getAssignmentsDebug() {
         return ResponseEntity.ok(taskAssignmentRepository.findAll().stream().map(ta -> java.util.Map.of(
@@ -87,6 +90,18 @@ public class AuthController {
             "status", ta.getStatus() != null ? ta.getStatus().toString() : "Null",
             "notified9am", ta.isNotified9am(),
             "notified5pm", ta.isNotified5pm()
+        )).collect(java.util.stream.Collectors.toList()));
+    }
+
+    @GetMapping("/debug-notifications")
+    public ResponseEntity<?> getNotificationsDebug() {
+        return ResponseEntity.ok(notificationRepository.findAll().stream().map(n -> java.util.Map.of(
+            "id", n.getId(),
+            "menteeName", n.getUser() != null ? n.getUser().getName() : "Null",
+            "menteeEmail", n.getUser() != null ? n.getUser().getEmail() : "Null",
+            "title", n.getTitle() != null ? n.getTitle() : "Null",
+            "message", n.getMessage() != null ? n.getMessage() : "Null",
+            "createdAt", n.getCreatedAt() != null ? n.getCreatedAt().toString() : "Null"
         )).collect(java.util.stream.Collectors.toList()));
     }
 
