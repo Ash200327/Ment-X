@@ -35,12 +35,20 @@ public interface TaskAssignmentRepository extends JpaRepository<TaskAssignment, 
     @Query("SELECT ta FROM TaskAssignment ta JOIN FETCH ta.task t LEFT JOIN FETCH t.group JOIN FETCH ta.mentee " +
            "WHERE ta.status NOT IN ('COMPLETED', 'SUBMITTED') " +
            "AND t.deadline <= :now " +
+           "AND t.deadline >= :windowStart " +
            "AND ta.notified9am = false")
-    List<TaskAssignment> findPending9amNotifications(@org.springframework.data.repository.query.Param("now") java.time.LocalDateTime now);
+    List<TaskAssignment> findPending9amNotifications(
+        @org.springframework.data.repository.query.Param("now") java.time.LocalDateTime now,
+        @org.springframework.data.repository.query.Param("windowStart") java.time.LocalDateTime windowStart
+    );
 
     @Query("SELECT ta FROM TaskAssignment ta JOIN FETCH ta.task t LEFT JOIN FETCH t.group JOIN FETCH ta.mentee " +
            "WHERE ta.status NOT IN ('COMPLETED', 'SUBMITTED') " +
            "AND t.deadline <= :now " +
+           "AND t.deadline >= :windowStart " +
            "AND ta.notified5pm = false")
-    List<TaskAssignment> findPending5pmNotifications(@org.springframework.data.repository.query.Param("now") java.time.LocalDateTime now);
+    List<TaskAssignment> findPending5pmNotifications(
+        @org.springframework.data.repository.query.Param("now") java.time.LocalDateTime now,
+        @org.springframework.data.repository.query.Param("windowStart") java.time.LocalDateTime windowStart
+    );
 }

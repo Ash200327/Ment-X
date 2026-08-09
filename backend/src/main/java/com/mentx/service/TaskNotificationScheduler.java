@@ -26,18 +26,20 @@ public class TaskNotificationScheduler {
         int hour = now.getHour();
 
         if (hour == 11) {
-            List<TaskAssignment> pending = taskAssignmentRepository.findPending9amNotifications(now);
+            LocalDateTime windowStart = now.minusDays(2);
+            List<TaskAssignment> pending = taskAssignmentRepository.findPending9amNotifications(now, windowStart);
             for (TaskAssignment ta : pending) {
                 try {
                     String title = "Reminder: Submit Update for " + ta.getTask().getTitle();
                     String message = buildMessage(ta);
                     taskNotificationHelper.sendReminderAndMark9am(ta, title, message);
                 } catch (Exception e) {
-                    System.err.println("Error sending 10:30 AM notification for assignment ID " + ta.getId() + ": " + e.getMessage());
+                    System.err.println("Error sending 11:15 AM notification for assignment ID " + ta.getId() + ": " + e.getMessage());
                 }
             }
         } else if (hour == 17) {
-            List<TaskAssignment> pending = taskAssignmentRepository.findPending5pmNotifications(now);
+            LocalDateTime windowStart = now.minusDays(2);
+            List<TaskAssignment> pending = taskAssignmentRepository.findPending5pmNotifications(now, windowStart);
             for (TaskAssignment ta : pending) {
                 try {
                     String title = "Reminder: Submit Update for " + ta.getTask().getTitle();
