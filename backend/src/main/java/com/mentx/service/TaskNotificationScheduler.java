@@ -18,14 +18,14 @@ public class TaskNotificationScheduler {
     @Autowired
     private TaskNotificationHelper taskNotificationHelper;
 
-    // Run every day at 10:45 AM and 5:00 PM (Asia/Kolkata timezone aligned)
-    @Scheduled(cron = "0 45 10 * * *", zone = "Asia/Kolkata")
+    // Run every day at 11:15 AM and 5:00 PM (Asia/Kolkata timezone aligned)
+    @Scheduled(cron = "0 15 11 * * *", zone = "Asia/Kolkata")
     @Scheduled(cron = "0 0 17 * * *", zone = "Asia/Kolkata")
     public void checkSubmissionWindows() {
         LocalDateTime now = LocalDateTime.now();
         int hour = now.getHour();
 
-        if (hour == 10) {
+        if (hour == 11) {
             List<TaskAssignment> pending = taskAssignmentRepository.findPending9amNotifications(now);
             for (TaskAssignment ta : pending) {
                 try {
