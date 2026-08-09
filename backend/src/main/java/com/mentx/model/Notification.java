@@ -28,7 +28,7 @@ public class Notification {
     private String title;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String message;
 
     @Builder.Default
