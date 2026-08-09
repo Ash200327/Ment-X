@@ -18,6 +18,15 @@ const TasksBoard = () => {
   const [filterType, setFilterType] = useState('ACTIVE'); // 'ACTIVE' or 'SUBMITTED'
 
   const now = new Date();
+  const isSubmissionWindowOpen = (deadlineString) => {
+    const d = new Date(deadlineString);
+    const maxAllowed = new Date(d);
+    maxAllowed.setDate(maxAllowed.getDate() + 1);
+    maxAllowed.setHours(23, 59, 59, 999);
+    const currentDate = new Date();
+    return currentDate >= d && currentDate <= maxAllowed;
+  };
+
   const activeAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status) && new Date(r.task.deadline) >= now);
   const pastAssignments = assignments.filter(r => ['SUBMITTED', 'COMPLETED'].includes(r.status));
   const overdueAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status) && new Date(r.task.deadline) < now);
@@ -386,7 +395,7 @@ const TasksBoard = () => {
                          )}
 
                          {['IN_PROGRESS', 'NEEDS_IMPROVEMENT', 'SUBMITTED'].includes(row.status) && (
-                           <Button size="small" variant="contained" color="secondary" startIcon={<SendIcon />} disabled={isOverdue} onClick={() => handleOpenSubmit(row)}>
+                           <Button size="small" variant="contained" color="secondary" startIcon={<SendIcon />} disabled={!isSubmissionWindowOpen(row.task.deadline)} onClick={() => handleOpenSubmit(row)}>
                              {row.status === 'SUBMITTED' ? 'Edit Update' : 'Submit Update'}
                            </Button>
                          )}

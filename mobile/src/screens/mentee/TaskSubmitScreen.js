@@ -13,6 +13,14 @@ export default function TaskSubmitScreen() {
   const theme = useTheme();
 
   const now = new Date();
+  const isSubmissionWindowOpen = (deadlineString) => {
+    const d = new Date(deadlineString);
+    const maxAllowed = new Date(d);
+    maxAllowed.setDate(maxAllowed.getDate() + 1);
+    maxAllowed.setHours(23, 59, 59, 999);
+    const currentDate = new Date();
+    return currentDate >= d && currentDate <= maxAllowed;
+  };
   const activeAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status) && new Date(r.task.deadline) >= now);
   const pastAssignments = assignments.filter(r => ['SUBMITTED', 'COMPLETED'].includes(r.status));
   const overdueAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status) && new Date(r.task.deadline) < now);
@@ -238,7 +246,7 @@ export default function TaskSubmitScreen() {
                 <Button mode="contained" compact disabled={isOverdue} onPress={() => handleStartTask(item.id)}>Start Work</Button>
               )}
               {['IN_PROGRESS', 'NEEDS_IMPROVEMENT', 'SUBMITTED'].includes(item.status) && (
-                <Button mode="contained" compact disabled={isOverdue} buttonColor="#6366f1" onPress={() => handleOpenSubmit(item)}>
+                <Button mode="contained" compact disabled={!isSubmissionWindowOpen(item.task.deadline)} buttonColor="#6366f1" onPress={() => handleOpenSubmit(item)}>
                   {item.status === 'SUBMITTED' ? 'Edit' : 'Submit'}
                 </Button>
               )}

@@ -19,14 +19,15 @@ public class TaskNotificationScheduler {
     @Autowired
     private NotificationService notificationService;
 
-    // Run every day at 9:00 AM and 5:00 PM (Asia/Kolkata timezone aligned)
-    @Scheduled(cron = "0 0 9,17 * * *")
+    // Run every day at 10:30 AM and 5:00 PM (Asia/Kolkata timezone aligned)
+    @Scheduled(cron = "0 30 10 * * *", zone = "Asia/Kolkata")
+    @Scheduled(cron = "0 0 17 * * *", zone = "Asia/Kolkata")
     @Transactional
     public void checkSubmissionWindows() {
         LocalDateTime now = LocalDateTime.now();
         int hour = now.getHour();
 
-        if (hour == 9) {
+        if (hour == 10) {
             List<TaskAssignment> pending = taskAssignmentRepository.findPending9amNotifications(now);
             for (TaskAssignment ta : pending) {
                 try {
@@ -34,7 +35,7 @@ public class TaskNotificationScheduler {
                     ta.setNotified9am(true);
                     taskAssignmentRepository.save(ta);
                 } catch (Exception e) {
-                    System.err.println("Error sending 9 AM notification for assignment ID " + ta.getId() + ": " + e.getMessage());
+                    System.err.println("Error sending 10:30 AM notification for assignment ID " + ta.getId() + ": " + e.getMessage());
                 }
             }
         } else if (hour == 17) {
