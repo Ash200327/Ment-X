@@ -242,15 +242,15 @@ export default function TaskSubmitScreen() {
       
       <Card.Actions style={styles.cardActions}>
         {(() => {
-          const isOverdue = new Date(item.task.deadline) < now;
+          const isClosed = now > getSubmissionDeadlineLimit(item.task.deadline);
           return (
             <>
               <Button mode="text" compact onPress={() => handleOpenTaskDetails(item.task)}>Details</Button>
               {item.status === 'ASSIGNED' && (
-                <Button mode="outlined" compact disabled={isOverdue} onPress={() => handleMarkRead(item.id)}>Mark Read</Button>
+                <Button mode="outlined" compact disabled={isClosed} onPress={() => handleMarkRead(item.id)}>Mark Read</Button>
               )}
               {['ASSIGNED', 'VIEWED'].includes(item.status) && (
-                <Button mode="contained" compact disabled={isOverdue} onPress={() => handleStartTask(item.id)}>Start Work</Button>
+                <Button mode="contained" compact disabled={isClosed} onPress={() => handleStartTask(item.id)}>Start Work</Button>
               )}
               {['IN_PROGRESS', 'NEEDS_IMPROVEMENT', 'SUBMITTED'].includes(item.status) && (
                 <Button mode="contained" compact disabled={!isSubmissionWindowOpen(item.task.deadline)} buttonColor="#6366f1" onPress={() => handleOpenSubmit(item)}>

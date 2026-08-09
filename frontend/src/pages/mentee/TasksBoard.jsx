@@ -380,43 +380,42 @@ const TasksBoard = () => {
                     />
                   </Box>
                 </CardContent>
+                <Box sx={{ p: 2, pt: 0, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  {(() => {
+                    const isClosed = now > getSubmissionDeadlineLimit(row.task.deadline);
+                    return (
+                      <>
+                        <Button size="small" variant="outlined" color="info" startIcon={<InfoIcon />} onClick={() => handleOpenTaskDetails(row.task)}>
+                          View Task Details
+                        </Button>
 
-                 <Box sx={{ p: 2, pt: 0, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                   {(() => {
-                     const isOverdue = new Date(row.task.deadline) < now;
-                     return (
-                       <>
-                         <Button size="small" variant="outlined" color="info" startIcon={<InfoIcon />} onClick={() => handleOpenTaskDetails(row.task)}>
-                           View Task Details
-                         </Button>
+                        {row.status === 'ASSIGNED' && (
+                          <Button size="small" variant="outlined" startIcon={<VisibilityIcon />} disabled={isClosed} onClick={() => handleMarkRead(row.id)}>
+                            Mark Read
+                          </Button>
+                        )}
 
-                         {row.status === 'ASSIGNED' && (
-                           <Button size="small" variant="outlined" startIcon={<VisibilityIcon />} disabled={isOverdue} onClick={() => handleMarkRead(row.id)}>
-                             Mark Read
-                           </Button>
-                         )}
+                        {['ASSIGNED', 'VIEWED'].includes(row.status) && (
+                          <Button size="small" variant="outlined" color="primary" startIcon={<PlayArrowIcon />} disabled={isClosed} onClick={() => handleStartTask(row.id)}>
+                            Start Work
+                          </Button>
+                        )}
 
-                         {['ASSIGNED', 'VIEWED'].includes(row.status) && (
-                           <Button size="small" variant="outlined" color="primary" startIcon={<PlayArrowIcon />} disabled={isOverdue} onClick={() => handleStartTask(row.id)}>
-                             Start Work
-                           </Button>
-                         )}
+                        {['IN_PROGRESS', 'NEEDS_IMPROVEMENT', 'SUBMITTED'].includes(row.status) && (
+                          <Button size="small" variant="contained" color="secondary" startIcon={<SendIcon />} disabled={!isSubmissionWindowOpen(row.task.deadline)} onClick={() => handleOpenSubmit(row)}>
+                            {row.status === 'SUBMITTED' ? 'Edit Update' : 'Submit Update'}
+                          </Button>
+                        )}
 
-                         {['IN_PROGRESS', 'NEEDS_IMPROVEMENT', 'SUBMITTED'].includes(row.status) && (
-                           <Button size="small" variant="contained" color="secondary" startIcon={<SendIcon />} disabled={!isSubmissionWindowOpen(row.task.deadline)} onClick={() => handleOpenSubmit(row)}>
-                             {row.status === 'SUBMITTED' ? 'Edit Update' : 'Submit Update'}
-                           </Button>
-                         )}
-
-                         {['SUBMITTED', 'COMPLETED', 'NEEDS_IMPROVEMENT'].includes(row.status) && (
-                           <Button size="small" variant="outlined" onClick={() => handleOpenDetails(row)}>
-                             View Submission Details
-                           </Button>
-                         )}
-                       </>
-                     );
-                   })()}
-                 </Box>
+                        {['SUBMITTED', 'COMPLETED', 'NEEDS_IMPROVEMENT'].includes(row.status) && (
+                          <Button size="small" variant="outlined" onClick={() => handleOpenDetails(row)}>
+                            View Submission Details
+                          </Button>
+                        )}
+                      </>
+                    );
+                  })()}
+                </Box>
               </Card>
             </Grid>
           ))}
