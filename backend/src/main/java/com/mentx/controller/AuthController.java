@@ -73,6 +73,23 @@ public class AuthController {
                 .stream().map(authService::convertToResponse).collect(java.util.stream.Collectors.toList()));
     }
 
+    @Autowired
+    private com.mentx.repository.TaskAssignmentRepository taskAssignmentRepository;
+
+    @GetMapping("/debug-assignments")
+    public ResponseEntity<?> getAssignmentsDebug() {
+        return ResponseEntity.ok(taskAssignmentRepository.findAll().stream().map(ta -> java.util.Map.of(
+            "id", ta.getId(),
+            "menteeName", ta.getMentee() != null ? ta.getMentee().getName() : "Null",
+            "menteeEmail", ta.getMentee() != null ? ta.getMentee().getEmail() : "Null",
+            "taskTitle", ta.getTask() != null ? ta.getTask().getTitle() : "Null",
+            "deadline", ta.getTask() != null && ta.getTask().getDeadline() != null ? ta.getTask().getDeadline().toString() : "Null",
+            "status", ta.getStatus() != null ? ta.getStatus().toString() : "Null",
+            "notified9am", ta.isNotified9am(),
+            "notified5pm", ta.isNotified5pm()
+        )).collect(java.util.stream.Collectors.toList()));
+    }
+
     // Helper Response DTO for sending simple text messages
     public static class MessageResponse {
         private String message;
