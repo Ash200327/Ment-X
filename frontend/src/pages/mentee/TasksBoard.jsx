@@ -27,9 +27,17 @@ const TasksBoard = () => {
     return currentDate >= d && currentDate <= maxAllowed;
   };
 
-  const activeAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status) && new Date(r.task.deadline) >= now);
+  const getSubmissionDeadlineLimit = (deadlineString) => {
+    const d = new Date(deadlineString);
+    const maxAllowed = new Date(d);
+    maxAllowed.setDate(maxAllowed.getDate() + 1);
+    maxAllowed.setHours(23, 59, 59, 999);
+    return maxAllowed;
+  };
+
+  const activeAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status) && now <= getSubmissionDeadlineLimit(r.task.deadline));
   const pastAssignments = assignments.filter(r => ['SUBMITTED', 'COMPLETED'].includes(r.status));
-  const overdueAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status) && new Date(r.task.deadline) < now);
+  const overdueAssignments = assignments.filter(r => !['SUBMITTED', 'COMPLETED'].includes(r.status) && now > getSubmissionDeadlineLimit(r.task.deadline));
   const filteredAssignments = 
     filterType === 'ACTIVE' ? activeAssignments : 
     filterType === 'SUBMITTED' ? pastAssignments : 
