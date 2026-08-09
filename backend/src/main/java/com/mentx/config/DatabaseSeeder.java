@@ -38,6 +38,14 @@ public class DatabaseSeeder implements CommandLineRunner {
             System.err.println("====== DB SCHEMA FIX ERROR: " + e.getMessage() + " ======");
         }
 
+        // Alter notifications message column to TEXT to prevent VARCHAR(255) overflows
+        try {
+            jdbcTemplate.execute("ALTER TABLE notifications ALTER COLUMN message TYPE TEXT;");
+            System.out.println("====== DB SCHEMA FIX: notifications.message column altered to TEXT successfully ======");
+        } catch (Exception e) {
+            System.err.println("====== DB SCHEMA FIX ERROR: " + e.getMessage() + " ======");
+        }
+
         if (!userRepository.existsByEmail(adminEmail)) {
             User admin = User.builder()
                     .name("Platform Admin")
