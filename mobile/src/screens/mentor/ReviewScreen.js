@@ -32,9 +32,21 @@ export default function ReviewScreen() {
     try {
       const res = await axiosInstance.get('/api/tasks/mentor/assignments');
       const sorted = res.data.sort((a, b) => {
+        // 1. Priority 1: Pending submissions (SUBMITTED) go to the top
         if (a.status === 'SUBMITTED' && b.status !== 'SUBMITTED') return -1;
         if (a.status !== 'SUBMITTED' && b.status === 'SUBMITTED') return 1;
-        return 0;
+
+        // 2. Priority 2: Latest week numbers first (Descending)
+        const weekA = a.task?.weekNumber || 0;
+        const weekB = b.task?.weekNumber || 0;
+        if (weekA !== weekB) {
+          return weekB - weekA;
+        }
+
+        // 3. Priority 3: Latest deadlines first (Descending)
+        const dateA = new Date(a.task?.deadline).getTime();
+        const dateB = new Date(b.task?.deadline).getTime();
+        return dateB - dateA;
       });
       setAssignments(sorted);
     } catch (e) {
