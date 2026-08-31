@@ -63,17 +63,22 @@ public class LeaderboardService {
                     .distinct()
                     .count();
 
-            double averageScore = activeWeeks > 0 ? (double) totalScore / activeWeeks : 0.0;
-            boolean eligible = activeWeeks >= 2;
-
-            // Consistency Badge logic: Completed at least 3 tasks and average task score >= 8
-            boolean consistencyBadge = false;
+            // Filter scores that are tied to actual task assignments
             List<Score> assignmentScores = scores.stream()
                     .filter(s -> s.getAssignment() != null)
                     .collect(Collectors.toList());
 
+            // Average score is calculated strictly from task assignments to keep a clean 10-point academic scale
+            double averageScore = !assignmentScores.isEmpty()
+                    ? assignmentScores.stream().mapToInt(Score::getScore).average().orElse(0.0)
+                    : 0.0;
+
+            boolean eligible = activeWeeks >= 2;
+
+            // Consistency Badge logic: Completed at least 3 tasks and average task score >= 8
+            boolean consistencyBadge = false;
             if (completedTasks >= 3 && !assignmentScores.isEmpty()) {
-                double avg = assignmentScores.stream().mapToInt(Score::getScore).average().orElse(0.0);
+                double avg = averageScore; // Re-use calculated average score
                 if (avg >= 8.0) {
                     consistencyBadge = true;
                 }
